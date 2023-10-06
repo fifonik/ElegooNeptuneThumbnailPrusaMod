@@ -36,6 +36,7 @@ Main changes:
 <img src="images/printer_settings.png" width="720" />
 
 PrusaSlicer should now run the exe when you export the g-code.
+In case of any issues check `thumbnail.log` first.
 
 If you do not specify any options, the first thumbnail from g-code file will be used: decoded, resized to 200x200 + 160x160, encoded into new format and baked back into g-code file.
 
@@ -43,9 +44,10 @@ If PrusaSlicer is configured to add more than one thumbnail into g-code file, yo
 `--image_size WIDTHxHEIGHT`
 
 
+
 ## Running from the script
 
-If you do not want to run the exe, you can always run the Python script directly:
+If you do not want to run the supplied executable, you can always run the Python script directly:
 - Install Python;
 - Clone the repo;
 - Change the settings for 'Post-processing scripts' to:
