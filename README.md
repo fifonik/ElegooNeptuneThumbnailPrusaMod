@@ -12,9 +12,9 @@ This package converts the thumbnail that PrusaSlicer bakes into the g-code file 
 I was not happy with previous implementations so tried to make it better. But ended up re-writing it :-)
 
 Main changes:
-- Faster: it does not read all file content into memory that is important especially for big g-code files;
+- Faster: it does not read all file content into memory, which is vital for big g-code files;
 - Easier installation: image size should be specified in one place only & the script accepts PNG or JPG;
-- Improved UI: print duration, used filament weight/length are added into thumbnail (weight/length rounded, print duration can be shorterned) and their ;
+- Improved UI: print duration, used filament weight/length are added into thumbnail (weight/length rounded, print duration can be shortened);
 - Better texts quality: texts added after resizing image, font size and texts positions adjusted automatically;
 - Smaller output file: original thumbnail removed from g-code file;
 - Some bugs were fixed (do not worry, I think newer bugs were added).
