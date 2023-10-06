@@ -59,6 +59,13 @@ If you do not want to run the supplied executable, you can always run the Python
   `"C:\Program Files\Python311\pythonw.exe" "C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.py";`
 
 
+## Building your own executable from script
+- Install Python;
+- Install pyinstaller: `pip install pyinstaller`
+- Clone the repo;
+- Open console, navigate to repo folder and `pyinstaller build.spec` => thumbnail.exe will be created in dist folder
+
+
 ## Compatibility
 
 Works with these printers:
