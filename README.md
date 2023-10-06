@@ -14,8 +14,8 @@ I was not happy with previous implementations so tried to make it better. But en
 Main changes:
 - Faster: it does not read all file content into memory that is important especially for big g-code files;
 - Easier installation: image size should be specified in one place only & the script accepts PNG or JPG;
-- Better texts quality: texts added after resizing image;
-- Better UI: print duration & used filament weight texts modified (weight rounded, print duration can be in shorter format) and their forn & positions adjusted;
+- Improved UI: print duration, used filament weight/length are added into thumbnail (weight/length rounded, print duration can be shorterned) and their ;
+- Better texts quality: texts added after resizing image, font size and texts positions adjusted automatically;
 - Smaller output file: original thumbnail removed from g-code file;
 - Some bugs were fixed (do not worry, I think newer bugs were added).
 
