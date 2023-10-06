@@ -32,8 +32,8 @@ Main changes:
 - 'Printer Settings' / 'Format of G-code thumbnails' -- select PNG or JPG (it may also work with QOI but I have not checked it);
 - 'Print Settings' / 'Post-processing scripts' -- specify path exeutable: `"C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.exe";`
 
-<img src="images/printer_settings.png" width="800" />
-<img src="images/printer_settings.png" width="800" />
+<img src="images/printer_settings.png" width="720" />
+<img src="images/printer_settings.png" width="720" />
 
 PrusaSlicer should now run the exe when you export the g-code.
 
