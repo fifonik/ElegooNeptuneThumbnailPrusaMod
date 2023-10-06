@@ -1,4 +1,4 @@
 /.vscode/
 /build/
 /dist/
-app.log
+build.bat
