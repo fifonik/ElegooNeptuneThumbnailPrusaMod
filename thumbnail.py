@@ -34,8 +34,12 @@ class Neptune_Thumbnail:
     def __init__(self, input_file, old_printer=False, image_size=None, debug=False, short_duration_format=False):
         self.input_file = input_file
         self.debug = debug
-        self.filament_usage = None
-        self.filament_usage_formatted = None
+        self.filament_cost = None
+        self.filament_used_formatted = None
+        self.filament_used_weight = None
+        self.filament_used_weight_formatted = None
+        self.filament_used_length = None
+        self.filament_used_length_formatted = None
         self.header = ''
         self.header_line = None
         self.image_size = image_size
@@ -43,6 +47,7 @@ class Neptune_Thumbnail:
         self.img_y = None
         self.img_type = 'PNG'
         self.img_suffix = ''
+        self.max_height = None
         self.print_duration = None
         self.print_duration_formatted = None
         self.print_duration_short_format = short_duration_format
@@ -84,8 +89,16 @@ class Neptune_Thumbnail:
                     self.log_debug(f'Print duration "{self.print_duration}" found at line {index}')
                 elif '; total filament used [g] =' in line:
                     value = line.split('=')
-                    self.filament_usage = value[1].strip()
-                    self.log_debug(f'Filament usage "{self.filament_usage}" found at line {index}')
+                    self.filament_used_weight = value[1].strip()
+                    self.log_debug(f'Filament used [g] "{self.filament_used_weight}" found at line {index}')
+                elif '; filament used [mm] =' in line:
+                    value = line.split('=')
+                    self.filament_used_length = value[1].strip()
+                    self.log_debug(f'Filament used [mm] "{self.filament_used_length}" found at line {index}')
+                elif '; total filament cost =' in line:
+                    value = line.split('=')
+                    self.filament_cost = value[1].strip()
+                    self.log_debug(f'Filament cost "{self.filament_cost}" found at line {index}')
                 elif '; thumbnail' in line and ' begin' in line:
                     found = False
                     if self.image_size is None:
@@ -110,7 +123,7 @@ class Neptune_Thumbnail:
                     self.log_debug(f'{self.img_type} thumbnail end found at line {index}')
                 elif self.img_encoded_begin is not None and self.img_encoded_end is None:
                     self.img_encoded += line.strip('; ')
-                if self.print_duration is not None and self.filament_usage is not None and self.img_encoded_begin is not None and self.img_encoded_end is not None:
+                if self.print_duration is not None and self.filament_used_weight is not None and self.img_encoded_begin is not None and self.img_encoded_end is not None:
                     return
 
             if self.img_encoded_begin is None:
@@ -119,7 +132,7 @@ class Neptune_Thumbnail:
                 raise Exception(f'Thumbnail end not found in {self.input_file}')
 
     def prepare(self):
-        if self.filament_usage is not None:
+        if self.print_duration is not None:
             if self.print_duration:
                 def repl(m):
                     s = m.group(1)
@@ -136,9 +149,17 @@ class Neptune_Thumbnail:
             else:
                 self.print_duration_formatted = self.print_duration
 
-        if self.filament_usage is not None:
-            self.filament_usage_formatted = str(round(float(self.filament_usage))) + 'g'
+        filament_used = ''
+        if self.filament_used_weight is not None:
+            self.filament_used_weight_formatted = str(round(float(self.filament_used_weight))) + 'g'
+            filament_used += self.filament_used_weight_formatted
 
+        if self.filament_used_length is not None:
+            self.filament_used_length_formatted = str(round(float(self.filament_used_length) / 1000)) + 'm'
+            filament_used += ' / ' + self.filament_used_length_formatted
+
+        if filament_used is not None:
+            self.filament_used_formatted = filament_used
 
 
     def image_decode(self, text) -> QImage:
@@ -172,7 +193,7 @@ class Neptune_Thumbnail:
         """
         Add texts to image
         """
-        if self.print_duration_formatted is None and self.filament_usage_formatted is None:
+        if self.print_duration_formatted is None and self.filament_used_weight_formatted is None:
             return img;
 
         self.log_debug('Adding texts to image')
@@ -198,10 +219,10 @@ class Neptune_Thumbnail:
             print_duration_y = int(font_size * 1.25)
             painter.drawText(print_duration_x, print_duration_y, self.print_duration_formatted)
 
-        if self.filament_usage_formatted is not None:
-            filament_usage_x = int(font_size / 4)
-            filament_usage_y = image_size.height() - int(font_size / 3)
-            painter.drawText(filament_usage_x, filament_usage_y, self.filament_usage_formatted)
+        if self.filament_used_formatted is not None:
+            filament_used_x = int(font_size / 4)
+            filament_used_y = image_size.height() - int(font_size / 3)
+            painter.drawText(filament_used_x, filament_used_y, self.filament_used_formatted)
 
         painter.end()
 
