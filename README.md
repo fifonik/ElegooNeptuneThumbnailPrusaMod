@@ -38,7 +38,9 @@ Main changes:
 PrusaSlicer should now run the exe when you export the g-code.
 
 If you do not specify any options, the first thumbnail from g-code file will be used: decoded, resized to 200x200 + 160x160, encoded into new format and baked back into g-code file.
-If PrusaSlicer configured to add more than one thumbnail into g-code file you can specify what thumbnail should be used with option `--image_size WxH`
+
+If PrusaSlicer is configured to add more than one thumbnail into g-code file, you can specify what thumbnail should be used with option:
+`--image_size WIDTHxHEIGHT`
 
 
 ## Running from the script
@@ -47,8 +49,11 @@ If you do not want to run the exe, you can always run the Python script directly
 - Install Python;
 - Clone the repo;
 - Change the settings for 'Post-processing scripts' to:
+  
   `"C:\Program Files\Python311\python.exe" "C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.py";`
+  
   Or, if you do not want to see the terminal window during script execution, use `pythonw.exe` instead:
+  
   `"C:\Program Files\Python311\pythonw.exe" "C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.py";`
 
 
@@ -94,5 +99,8 @@ To add arguments to the script, make sure to wrap them in double quotes:
 
 ## Contribution
 
-This repository is based on [TheJMaster28/ElegooNeptuneThumbnailPrusa](https://github.com/TheJMaster28/ElegooNeptuneThumbnailPrusa), [Molodos/ElegooNeptuneThumbnails](https://github.com/Molodos/ElegooNeptuneThumbnails) and [sigathi/ElegooN3Thumbnail](https://github.com/sigathi/ElegooN3Thumbnail), therefore
-released under the **AGPL v3** license.
+This repository is based on:
+- [TheJMaster28/ElegooNeptuneThumbnailPrusa](https://github.com/TheJMaster28/ElegooNeptuneThumbnailPrusa)
+- [Molodos/ElegooNeptuneThumbnails](https://github.com/Molodos/ElegooNeptuneThumbnails)
+- [sigathi/ElegooN3Thumbnail](https://github.com/sigathi/ElegooN3Thumbnail)
+Therefore released under the **AGPL v3** license.
