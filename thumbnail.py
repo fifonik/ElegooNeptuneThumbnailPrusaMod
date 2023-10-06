@@ -145,7 +145,10 @@ class Neptune_Thumbnail:
                             return ''
                     return ':' + '{:02d}'.format(int(s))
                 s = re.sub(r'\s*(\d+)\s*([dhms])', repl, self.print_duration)
-                self.print_duration_formatted = s.replace(' :', ' ')
+                s = s.replace(' :', ' ').strip(': ')
+                if ':' not in s:
+                    s = '00:' + s
+                self.print_duration_formatted = s
             else:
                 self.print_duration_formatted = self.print_duration
 
