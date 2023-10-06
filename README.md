@@ -23,7 +23,7 @@ Main changes:
 ## Installation
 
 - Download the [latest release](https://github.com/fifonik/ElegooNeptuneThumbnailPrusaMod/releases)
-- Extract the zip to location where the exe can be executed
+- Put the executable to desired location
 
 
 ## How to Setup PrusaSlicer for Post-Process Scripts
@@ -86,9 +86,9 @@ Use the `--old_printer` argument for these printers:
 - NEPTUNE X
 
 
-Tested with 2.6.1 and Neptune 4
+Tested with PrusaSlicer 2.6.1 and Neptune 4
 
-Apple silicone will not work on the release. In order to run, you must run the script through an x86 python or else the dlls wil not work. You can does this by installing the x86 Homebrew and Rosetta 2.
+Apple silicone will not work on the release. In order to run, you must run the script through an x86 python otherwise the dlls will not work. You can do this by installing the x86 Homebrew and Rosetta 2.
 
 
 ## Arguments
@@ -96,11 +96,13 @@ Apple silicone will not work on the release. In order to run, you must run the s
 - `--old_printer`
   Generate thumbnails for Neptune 2 series printers and older
 - `--short_duration_format`
-  Use short format for print duration: Dd HH:MM (who need these seconds?)
+  Use short format for print duration: 1d 23:45 instead of 1d 23h 45m 56s. Who need these seconds really?
 - `--image_size 200x200`
-  Image size to look for in the g-code file. If specified it must match to what is in the 'G-code thumbnails' field
+  Image size to look for in the g-code file.
+  Without this option the first thumbnail from g-code file will be used.
+  If specified it must match to value specified in 'G-code thumbnails' field
 - `--debug`
-  Put debug additional information into log file (`thumbnail.log`) and save resized images in program folder
+  Put additional debug information into log file (`thumbnail.log`) and save resized images in program folder
 
 To add arguments to the script, make sure to wrap them in double quotes:
 `"C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.exe" "--image_size" "300x300";`
