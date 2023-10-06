@@ -5,7 +5,7 @@
 This package converts the thumbnail that PrusaSlicer bakes into the g-code file into the format that is read by the Neptune printers.
 
 <img src="images/screenshot.png" />
-
+<img src="images/main.jpg" />
 
 ## Why the mod?
 
