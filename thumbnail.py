@@ -14,9 +14,7 @@ import re
 import sys
 from array import array
 from ctypes import *
-from datetime import timedelta
 from io import BytesIO
-from string import Formatter
 from os import path, replace
 
 from PyQt6.QtCore import Qt
