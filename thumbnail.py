@@ -171,7 +171,7 @@ class Neptune_Thumbnail:
             filament_used.append(self.filament_used_length_formatted)
 
         if filament_used:
-            self.filament_used_formatted = ' / '.join(filament_used)
+            self.filament_used_formatted = ', '.join(filament_used)
 
         if self.max_height > 0:
             self.max_height_formatted = '{:d}'.format(round(self.max_height)) + 'mm'
