@@ -126,10 +126,13 @@ class Neptune_Thumbnail:
                 if self.print_duration is not None and self.filament_used_weight is not None and self.img_encoded_begin is not None and self.img_encoded_end is not None:
                     return
 
-            if self.img_encoded_begin is None:
-                raise Exception(f'Thumbnail begin not found in {self.input_file}')
-            if self.img_encoded_end is None:
-                raise Exception(f'Thumbnail end not found in {self.input_file}')
+            if self.image_size is not None:
+                # Errors only if size specified in options but the thumbnail is not found
+                if self.img_encoded_begin is None:
+                    raise Exception(f'Thumbnail begin not found in {self.input_file}')
+                if self.img_encoded_begin is not None and self.img_encoded_end is None:
+                    raise Exception(f'Thumbnail end not found in {self.input_file}')
+
 
     def prepare(self):
         if self.print_duration is not None:
@@ -188,6 +191,13 @@ class Neptune_Thumbnail:
         """
         Resize image
         """
+        if img is None:
+            raise Exception('No image')
+
+        image_size = img.size()
+        if image_size.width() == width and image_size.height() == height:
+            return img;
+
         self.log_debug(f'Scaling image to {width}x{height}')
         return img.scaled(width, height, Qt.AspectRatioMode.KeepAspectRatio)
 
@@ -196,7 +206,7 @@ class Neptune_Thumbnail:
         """
         Add texts to image
         """
-        if self.print_duration_formatted is None and self.filament_used_weight_formatted is None:
+        if self.print_duration_formatted is None and self.filament_used_formatted is None:
             return img;
 
         self.log_debug('Adding texts to image')
@@ -239,6 +249,9 @@ class Neptune_Thumbnail:
         """
         Encode image for old printers
         """
+        if img is None:
+            raise Exception('No image')
+
         self.log_debug(f'Encoding image for old printers ({prefix})')
         result = ''
         image_size = img.size()
@@ -278,6 +291,9 @@ class Neptune_Thumbnail:
         """
         Encode image for new printers
         """
+        if img is None:
+            raise Exception('No image')
+
         self.log_debug(f'Encoding image for new printers ({prefix})')
         system = platform.system()
         if system == 'Darwin':
@@ -353,6 +369,10 @@ class Neptune_Thumbnail:
 
         self.prepare()
 
+        if not self.img_encoded:
+            logger.info('Thumbnail not found in g-code')
+            return;
+
         img_decoded = self.image_decode(self.img_encoded)
 
         img_200x200 = self.image_modify(self.image_resize(img_decoded, 200, 200))
@@ -381,6 +401,7 @@ class Neptune_Thumbnail:
             for index, line in enumerate(input):
                 if index != self.header_line and (self.img_encoded_begin is not None and self.img_encoded_end is not None and (index < self.img_encoded_begin or index > self.img_encoded_end)):
                     output.write(line)
+
         if path.isfile(output_file):
             self.log_debug(f'Renaming file {output_file} to {self.input_file}')
             replace(output_file, self.input_file)

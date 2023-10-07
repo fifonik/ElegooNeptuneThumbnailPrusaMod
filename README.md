@@ -114,4 +114,5 @@ This repository is based on:
 - [TheJMaster28/ElegooNeptuneThumbnailPrusa](https://github.com/TheJMaster28/ElegooNeptuneThumbnailPrusa)
 - [Molodos/ElegooNeptuneThumbnails](https://github.com/Molodos/ElegooNeptuneThumbnails)
 - [sigathi/ElegooN3Thumbnail](https://github.com/sigathi/ElegooN3Thumbnail)
-Therefore released under the **AGPL v3** license.
+
+Therefore it is released under the **AGPL v3** license.
