@@ -267,12 +267,13 @@ class Neptune_Thumbnail:
                 b = pixel_color.blue() >> 3
                 rgb = (r << 11) | (g << 5) | b
                 str_hex = '%x' % rgb
-                if len(str_hex) == 3:
-                    str_hex = '0' + str_hex[0:3]
-                elif len(str_hex) == 2:
-                    str_hex = '00' + str_hex[0:2]
-                elif len(str_hex) == 1:
-                    str_hex = '000' + str_hex[0:1]
+                match len(str_hex):
+                    case 3:
+                        str_hex = '0' + str_hex[0:3]
+                    case 2:
+                        str_hex = '00' + str_hex[0:2]
+                    case 1:
+                        str_hex = '000' + str_hex[0:1]
                 if str_hex[2:4] != '':
                     result += str_hex[2:4]
                     datasize += 2
