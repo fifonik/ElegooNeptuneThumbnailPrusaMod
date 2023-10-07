@@ -155,17 +155,18 @@ class Neptune_Thumbnail:
             else:
                 self.print_duration_formatted = self.print_duration
 
-        filament_used = ''
+
+        filament_used = []
         if self.filament_used_weight is not None:
             self.filament_used_weight_formatted = str(round(float(self.filament_used_weight))) + 'g'
-            filament_used += self.filament_used_weight_formatted
+            filament_used.append(self.filament_used_weight_formatted)
 
         if self.filament_used_length is not None:
             self.filament_used_length_formatted = str(round(float(self.filament_used_length) / 1000)) + 'm'
-            filament_used += ' / ' + self.filament_used_length_formatted
+            filament_used.append(self.filament_used_length_formatted)
 
-        if filament_used is not None:
-            self.filament_used_formatted = filament_used
+        if filament_used:
+            self.filament_used_formatted = ' / '.join(filament_used)
 
 
     def image_decode(self, text) -> QImage:
@@ -179,12 +180,12 @@ class Neptune_Thumbnail:
         text_bytes = text.encode('ascii')
         decode_data = base64.b64decode(text_bytes)
         image_stream = BytesIO(decode_data)
-        qimage: QImage = QImage.fromData(image_stream.getvalue())
+        img: QImage = QImage.fromData(image_stream.getvalue())
 
-        if qimage.format() != QImage.Format.Format_ARGB32:
-            qimage = qimage.convertToFormat(QImage.Format.Format_ARGB32)
+        if img.format() != QImage.Format.Format_ARGB32:
+            img = img.convertToFormat(QImage.Format.Format_ARGB32)
 
-        return qimage
+        return img
 
 
     def image_resize(self, img: QImage, width, height) -> QImage:
