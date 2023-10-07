@@ -194,8 +194,8 @@ class Neptune_Thumbnail:
         if img is None:
             raise Exception('No image')
 
-        image_size = img.size()
-        if image_size.width() == width and image_size.height() == height:
+        img_size = img.size()
+        if img_size.width() == width and img_size.height() == height:
             return img;
 
         self.log_debug(f'Scaling image to {width}x{height}')
@@ -211,8 +211,8 @@ class Neptune_Thumbnail:
 
         self.log_debug('Adding texts to image')
 
-        image_size = img.size()
-        font_size = int(image_size.height() / 12);
+        img_size = img.size()
+        font_size = int(img_size.height() / 12);
 
         pen = QPen()
         pen.setWidth(2)
@@ -234,13 +234,13 @@ class Neptune_Thumbnail:
 
         if self.filament_used_formatted is not None:
             filament_used_x = int(font_size / 4)
-            filament_used_y = image_size.height() - int(font_size / 3)
+            filament_used_y = img_size.height() - int(font_size / 3)
             painter.drawText(filament_used_x, filament_used_y, self.filament_used_formatted)
 
         painter.end()
 
         if self.debug:
-            img.save(path.join(script_dir, 'img-' + str(image_size.width()) + 'x' + str(image_size.height()) + '.' + self.img_type.lower()))
+            img.save(path.join(script_dir, 'img-' + str(img_size.width()) + 'x' + str(img_size.height()) + '.' + self.img_type.lower()))
 
         return img
 
@@ -254,9 +254,9 @@ class Neptune_Thumbnail:
 
         self.log_debug(f'Encoding image for old printers ({prefix})')
         result = ''
-        image_size = img.size()
-        width = image_size.width()
-        height = image_size.height()
+        img_size = img.size()
+        width = img_size.width()
+        height = img_size.height()
         result += prefix
         datasize = 0
         for i in range(height):
@@ -310,9 +310,9 @@ class Neptune_Thumbnail:
         self.log_debug(f'Using {system} dll: {dll_path}')
 
         result = ''
-        image_size = img.size()
-        width = image_size.width()
-        height = image_size.height()
+        img_size = img.size()
+        width = img_size.width()
+        height = img_size.height()
         pixels = width * height
         color16 = array('H')
         try:
