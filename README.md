@@ -1,4 +1,4 @@
-# Yet another thumbnails PrusaSlicer script for Elegoo Neptune
+# Yet another PrusaSlicer thumbnail script for Elegoo Neptune
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 
