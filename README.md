@@ -29,16 +29,16 @@ Notable changes:
 ## How to Setup PrusaSlicer for Post-Process Scripts
 
 - 'Printer Settings' / 'G-code thumbnails' -- put something like `200x200` (do not go too high as the image ingected in script by PrusaSlicer will be resized to 200x200 by the script anyway);
-- 'Printer Settings' / 'Format of G-code thumbnails' -- select PNG or JPG (it may also work with QOI but I have not tested it);
-- 'Print Settings' / 'Post-processing scripts' -- specify path exeutable: `"C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.exe";`
+- 'Printer Settings' / 'Format of G-code thumbnails' - select PNG or JPG (it may also work with QOI but I have not tested it);
+- 'Print Settings' / 'Post-processing scripts' - specify path to executable: `"C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.exe";`
 
 <img src="images/printer_settings.png" width="720" />
 <img src="images/printer_settings.png" width="720" />
 
-PrusaSlicer should now run the exe when you export your g-code.
-In case of any issues check `thumbnail.log` first.
+PrusaSlicer should now run the thumbnail.exe when you export your g-code.
+In case of issues - check `thumbnail.log`.
 
-If you do not specify any options, the first thumbnail from g-code file will be used: decoded, resized to 200x200 + 160x160, encoded into new format and baked back into g-code file.
+If you do not specify any options, the first thumbnail from g-code file that is bigger than 100x100 will be used: decoded, resized to 200x200 + 160x160, encoded into new format and baked back into g-code file.
 
 If PrusaSlicer is configured to add more than one thumbnail into g-code file, you can specify what thumbnail the script should use with option:
 `--image_size WIDTHxHEIGHT`
@@ -52,11 +52,11 @@ If you do not want to run the supplied executable, you can always run the Python
 - Clone the repo;
 - Change the settings for 'Post-processing scripts' to:
   
-  `"C:\Program Files\Python311\python.exe" "C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.py";`
+  `"C:\path\to\python.exe" "C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.py";`
   
   Or, if you do not want to see the terminal window during script execution, use `pythonw.exe` instead:
   
-  `"C:\Program Files\Python311\pythonw.exe" "C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.py";`
+  `"C:\path\to\pythonw.exe" "C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.py";`
 
 
 ## Building your own executable from the script
