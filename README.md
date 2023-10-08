@@ -5,7 +5,7 @@
 This package converts the thumbnail that PrusaSlicer bakes into the g-code file into the format that is read by the Neptune printers.
 
 <img src="images/screenshot.png" />
-<img src="images/main.jpg" width="480" />
+<img src="images/main.jpg" width="360" />
 
 ## Why the mod?
 
@@ -15,7 +15,7 @@ Main changes:
 - Faster: it does not read all file content into memory, which is vital for big g-code files;
 - Easier installation: image size should be specified in one place only & the script accepts PNG or JPG;
 - More information: print duration, used filament weight/length and model height are displayed on the thumbnail;
-- Better texts quality: texts added after resizing image, font size and texts positions adjusted automatically;
+- Better texts quality: texts added after image resizing, font size and texts positions adjusted automatically;
 - Smaller output file: original thumbnail removed from g-code file;
 - Some bugs were fixed (do not worry, I think newer bugs were added).
 
