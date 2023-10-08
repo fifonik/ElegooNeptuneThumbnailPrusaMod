@@ -205,7 +205,7 @@ class Neptune_Thumbnail:
 
         img_size = img.size()
         if img_size.width() == width and img_size.height() == height:
-            return img;
+            return QImage(img);
 
         self.log_debug(f'Scaling image to {width}x{height}')
         return img.scaled(width, height, Qt.AspectRatioMode.KeepAspectRatio)
