@@ -1,4 +1,4 @@
-# Elegoo Neptune Thumbnails for PrusaSlicer
+# Yet another thumbnails PrusaSlicer script for Elegoo Neptune
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 
@@ -7,40 +7,40 @@ This package converts the thumbnail that PrusaSlicer bakes into the g-code file 
 <img src="images/screenshot.png" />
 <img src="images/main.jpg" width="360" />
 
-## Why the mod?
+
+## Why another mod?
 
 I was not happy with previous implementations so tried to make it better. But ended up re-writing it :-)
 
-Main changes:
+Notable changes:
 - Faster: it does not read all file content into memory, which is vital for big g-code files;
-- Easier installation: image size should be specified in one place only & the script accepts PNG or JPG;
-- More information: print duration, used filament weight/length and model height are displayed on the thumbnail;
+- Easier installation: image size should only be specified in printer settings and the script accepts PNG and JPG;
+- More information on thumbnail: print duration, used filament weight, used filament length and model height;
 - Better texts quality: texts added after image resizing, font size and texts positions adjusted automatically;
-- Smaller output file: original thumbnail removed from g-code file;
-- Some bugs were fixed (do not worry, I think newer bugs were added).
+- Smaller output file: original thumbnail removed from g-code file.
 
 
 ## Installation
 
-- Download the [latest release](https://github.com/fifonik/ElegooNeptuneThumbnailPrusaMod/releases)
-- Put the executable to desired location
+- Download the [latest release](https://github.com/fifonik/ElegooNeptuneThumbnailPrusaMod/releases);
+- Unzip the executable and put it to desired location.
 
 
 ## How to Setup PrusaSlicer for Post-Process Scripts
 
-- 'Printer Settings' / 'G-code thumbnails' -- put something like `200x200` (do not go too high as image will be resized to 200x200 anyway);
-- 'Printer Settings' / 'Format of G-code thumbnails' -- select PNG or JPG (it may also work with QOI but I have not checked it);
+- 'Printer Settings' / 'G-code thumbnails' -- put something like `200x200` (do not go too high as the image ingected in script by PrusaSlicer will be resized to 200x200 by the script anyway);
+- 'Printer Settings' / 'Format of G-code thumbnails' -- select PNG or JPG (it may also work with QOI but I have not tested it);
 - 'Print Settings' / 'Post-processing scripts' -- specify path exeutable: `"C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.exe";`
 
 <img src="images/printer_settings.png" width="720" />
 <img src="images/printer_settings.png" width="720" />
 
-PrusaSlicer should now run the exe when you export the g-code.
+PrusaSlicer should now run the exe when you export your g-code.
 In case of any issues check `thumbnail.log` first.
 
 If you do not specify any options, the first thumbnail from g-code file will be used: decoded, resized to 200x200 + 160x160, encoded into new format and baked back into g-code file.
 
-If PrusaSlicer is configured to add more than one thumbnail into g-code file, you can specify what thumbnail should be used with option:
+If PrusaSlicer is configured to add more than one thumbnail into g-code file, you can specify what thumbnail the script should use with option:
 `--image_size WIDTHxHEIGHT`
 
 
@@ -60,10 +60,11 @@ If you do not want to run the supplied executable, you can always run the Python
 
 
 ## Building your own executable from script
+
 - Install Python;
 - Install pyinstaller: `pip install pyinstaller`
 - Clone the repo;
-- Open console, navigate to repo folder and `pyinstaller build.spec` => thumbnail.exe will be created in dist folder
+- Open console, navigate to the repo folder and run `pyinstaller build.spec` => thumbnail.exe will be created in `dist` folder
 
 
 ## Compatibility
@@ -91,10 +92,10 @@ Tested with PrusaSlicer 2.6.1 and Neptune 4
 Apple silicone will not work on the release. In order to run, you must run the script through an x86 python otherwise the dlls will not work. You can do this by installing the x86 Homebrew and Rosetta 2.
 
 
-## Arguments
+## Accepted command line parameters
 
 - `--old_printer`
-  Generate thumbnails for Neptune 2 series printers and older
+  Generate thumbnails for Neptune 2 series printers & older
 - `--short_duration_format`
   Use short format for print duration: 1d 23:45 instead of 1d 23h 45m 56s. Who need these seconds really?
 - `--image_size 200x200`
@@ -104,7 +105,7 @@ Apple silicone will not work on the release. In order to run, you must run the s
 - `--debug`
   Put additional debug information into log file (`thumbnail.log`) and save resized images in program folder
 
-To add arguments to the script, make sure to wrap them in double quotes:
+To add command line option to the script in PrusaSlicer, make sure you wrap them in double quotes:
 `"C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.exe" "--image_size" "300x300";`
 
 
