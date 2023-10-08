@@ -59,12 +59,12 @@ If you do not want to run the supplied executable, you can always run the Python
   `"C:\Program Files\Python311\pythonw.exe" "C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.py";`
 
 
-## Building your own executable from script
+## Building your own executable from the script
 
 - Install Python;
 - Install pyinstaller: `pip install pyinstaller`
 - Clone the repo;
-- Open console, navigate to the repo folder and run `pyinstaller build.spec` => thumbnail.exe will be created in `dist` folder
+- Open console, navigate to the repo folder and run `pyinstaller build.spec` (or just run supplied `build.bat`) => thumbnail.exe will be created in `dist` folder
 
 
 ## Compatibility
@@ -92,20 +92,19 @@ Tested with PrusaSlicer 2.6.1 and Neptune 4
 Apple silicone will not work on the release. In order to run, you must run the script through an x86 python otherwise the dlls will not work. You can do this by installing the x86 Homebrew and Rosetta 2.
 
 
-## Accepted command line parameters
+## Supported command line parameters
 
+- `--short_duration_format`
+  Use short format for print duration: 1d 23:45 instead of 1d 23h 45m 56s. Who need these seconds, really?
+- `--debug`
+  Put additional debug information into log file (`thumbnail.log`) and save resized images in program folder. I will ask you to run with the option and supply log in case you face any issues.
 - `--old_printer`
   Generate thumbnails for Neptune 2 series printers & older
-- `--short_duration_format`
-  Use short format for print duration: 1d 23:45 instead of 1d 23h 45m 56s. Who need these seconds really?
 - `--image_size 200x200`
-  Image size to look for in the g-code file.
-  Without this option the first thumbnail from g-code file will be used.
-  If specified it must match to value specified in 'G-code thumbnails' field
-- `--debug`
-  Put additional debug information into log file (`thumbnail.log`) and save resized images in program folder
+  Without this option the first thumbnail that is bigger than 100x100px from g-code file will be used.
+  If specified, the script will try to find in g-code thumbnail with the specified image size. Script will report error if such thumbnail is not found. So I'd recommend not to use the option at all and only specify size 200x200 in 'Printer Settings'.
 
-To add command line option to the script in PrusaSlicer, make sure you wrap them in double quotes:
+To add script's command line option in PrusaSlicer, make sure you wrap them in double quotes:
 `"C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.exe" "--image_size" "300x300";`
 
 
