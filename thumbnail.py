@@ -407,8 +407,7 @@ class Neptune_Thumbnail:
             output.write(header)
             self.log_debug(f'Copying content from file {self.input_file} to file {output_file}')
             for index, line in enumerate(input):
-                if index != self.header_line and (self.img_encoded_begin is not None and self.img_encoded_end is not None and (index < self.img_encoded_begin or index > self.img_encoded_end)):
-                    output.write(line)
+                if index != self.header_line: output.write(line)
 
         if path.isfile(output_file):
             self.log_debug(f'Renaming file {output_file} to {self.input_file}')
