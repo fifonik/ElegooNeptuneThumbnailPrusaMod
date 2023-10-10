@@ -16,7 +16,8 @@ Notable changes:
 - Faster: it does not read all file content into memory, which is vital for big g-code files;
 - Easier installation: image size should only be specified in printer settings and the script accepts PNG and JPG;
 - More information on thumbnail: print duration, used filament weight, used filament length and model height;
-- Better texts quality: texts added after image resizing, font size and texts positions adjusted automatically.
+- Better texts quality: texts added after image resizing, font size and texts positions adjusted automatically;
+- Adjust g-code so completed percentage and remaining time are displayed correctly under the thumbnail (you need to tick "Support remaining times" checkbox in Printer Settings).
 
 
 ## Installation

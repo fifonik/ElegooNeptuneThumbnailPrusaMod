@@ -406,8 +406,23 @@ class Neptune_Thumbnail:
             self.log_debug(f'Writing new header with image into file {output_file}')
             output.write(header)
             self.log_debug(f'Copying content from file {self.input_file} to file {output_file}')
+            time = None
+            time_code = ';TIME:'
             for index, line in enumerate(input):
-                if index != self.header_line: output.write(line)
+                if index == self.header_line:
+                    continue
+                output.write(line)
+                if line.startswith('M73 P'):
+                    # Converting 'M73 P<percentage-completed> R<time-left-in-minutes>' to ';TIME:<print-duration-in-seconds>' + ';TIME_ELAPSED:<time-elapsed-in-seconds>'
+                    (percentage, time_to_end) = line[5:].split(' R')
+                    t = int(time_to_end) * 60
+                    if time is not None:
+                        t = time - t
+                    self.log_debug(f'Progress: {percentage}% complete, {t} seconds passed')
+                    output.write(time_code + str(t) + '\r');
+                    if time is None:
+                        time_code = ';TIME_ELAPSED:'
+                        time = t;
 
         if path.isfile(output_file):
             self.log_debug(f'Renaming file {output_file} to {self.input_file}')
