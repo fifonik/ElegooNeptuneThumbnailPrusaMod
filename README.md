@@ -28,8 +28,7 @@ Notable changes:
 
 ## How to Setup PrusaSlicer for Post-Process Scripts
 
-- 'Printer Settings' / 'G-code thumbnails' -- put something like `200x200` (do not go too high as the image ingected in script by PrusaSlicer will be resized to 200x200 by the script anyway);
-- 'Printer Settings' / 'Format of G-code thumbnails' - select PNG or JPG (it may also work with QOI but I have not tested it):
+- 'Printer Settings' -- put something like `200x200` in 'Format of G-code thumbnails' (do not go too high in image resolution as the image injected in script by PrusaSlicer will be resized to 200x200 by the script anyway) and select `PNG` or `JPG` in 'Format of G-code thumbnails' (it may also work with QOI but I have not tested it):
   <img src="images/printer_settings.png" width="720" />
 - 'Print Settings' / 'Post-processing scripts' - specify path to executable: `"C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.exe";`:
   <img src="images/print_settings.png" width="720" />
