@@ -29,11 +29,10 @@ Notable changes:
 ## How to Setup PrusaSlicer for Post-Process Scripts
 
 - 'Printer Settings' / 'G-code thumbnails' -- put something like `200x200` (do not go too high as the image ingected in script by PrusaSlicer will be resized to 200x200 by the script anyway);
-- 'Printer Settings' / 'Format of G-code thumbnails' - select PNG or JPG (it may also work with QOI but I have not tested it);
-- 'Print Settings' / 'Post-processing scripts' - specify path to executable: `"C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.exe";`
-
-<img src="images/printer_settings.png" width="720" />
-<img src="images/print_settings.png" width="720" />
+- 'Printer Settings' / 'Format of G-code thumbnails' - select PNG or JPG (it may also work with QOI but I have not tested it):
+  <img src="images/printer_settings.png" width="720" />
+- 'Print Settings' / 'Post-processing scripts' - specify path to executable: `"C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.exe";`:
+  <img src="images/print_settings.png" width="720" />
 
 PrusaSlicer should now run the thumbnail.exe when you export your g-code.
 In case of issues - check `thumbnail.log`.
