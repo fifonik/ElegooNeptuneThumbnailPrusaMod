@@ -33,7 +33,7 @@ Notable changes:
 - 'Print Settings' / 'Post-processing scripts' - specify path to executable: `"C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.exe";`
 
 <img src="images/printer_settings.png" width="720" />
-<img src="images/printer_settings.png" width="720" />
+<img src="images/print_settings.png" width="720" />
 
 PrusaSlicer should now run the thumbnail.exe when you export your g-code.
 In case of issues - check `thumbnail.log`.
