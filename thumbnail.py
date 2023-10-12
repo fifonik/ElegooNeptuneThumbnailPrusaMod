@@ -141,7 +141,7 @@ class Neptune_Thumbnail:
 
     def prepare(self):
         if self.print_duration is not None:
-            if self.print_duration:
+            if self.print_duration_short_format:
                 def repl(m):
                     s = m.group(1)
                     if s is None:
