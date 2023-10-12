@@ -156,9 +156,9 @@ class Neptune_Thumbnail:
                 s = s.replace(' :', ' ').strip(': ')
                 if ':' not in s:
                     s = '00:' + s
-                self.print_duration_formatted = '◴' + s
+                self.print_duration_formatted = '⌚' + s
             else:
-                self.print_duration_formatted = '◴' + self.print_duration
+                self.print_duration_formatted = '⌚' + self.print_duration
 
 
         filament_used = []
@@ -174,7 +174,7 @@ class Neptune_Thumbnail:
             self.filament_used_formatted = ', '.join(filament_used)
 
         if self.max_height > 0:
-            self.max_height_formatted = '↥' + '{:d}'.format(round(self.max_height)) + 'mm'
+            self.max_height_formatted = '⤒' + '{:d}'.format(round(self.max_height)) + 'mm'
 
 
     def image_decode(self, text) -> QImage:
@@ -223,8 +223,8 @@ class Neptune_Thumbnail:
         img_size = img.size()
         font_size = int(img_size.width() / 14);
 
-        rect_top = QRect(3, 1, img_size.width() - 6, int(img_size.height() / 2) - 1)
-        rect_bottom = QRect(3, int(img_size.height() / 2), img_size.width() - 6, int(img_size.height() / 2) - 1)
+        rect_top = QRect(0, 0, img_size.width() - 2, int(img_size.height() / 2) - 1)
+        rect_bottom = QRect(0, int(img_size.height() / 2), img_size.width() - 2, int(img_size.height() / 2) - 1)
 
         font = QFont('Arial', font_size)
         font.setStyleHint(QFont.StyleHint.AnyStyle, QFont.StyleStrategy.ForceOutline)
