@@ -48,21 +48,16 @@ If PrusaSlicer is configured to add more than one thumbnail into g-code file, yo
 If you do not want to run the supplied executable, you can always run the Python script directly:
 - Install Python;
 - Clone the repo;
-- Change the settings for 'Post-processing scripts' to:
-  
-  `"C:\path\to\python.exe" "C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.py";`
-  
-  Or, if you do not want to see the terminal window during script execution, use `pythonw.exe` instead:
-  
-  `"C:\path\to\pythonw.exe" "C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.py";`
+- Change the settings for 'Post-processing scripts' to `"C:\path\to\python.exe" "C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.py";`
+- If you want to hide the terminal window use: `"C:\path\to\pythonw.exe" "C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.py";`
 
 
 ## Building your own executable from the script
 
 - Install Python;
-- Install pyinstaller: `pip install pyinstaller`
+- Install pyinstaller: `pip install pyinstaller`;
 - Clone the repo;
-- Open console, navigate to the repo folder and run `pyinstaller build.spec` (or just run supplied `build.bat`) => thumbnail.exe will be created in `dist` folder
+- Open console, navigate to the repo folder and run `pyinstaller build.spec` (or just run supplied `build.bat`) => thumbnail.exe will be created in `dist` folder.
 
 
 ## Compatibility
