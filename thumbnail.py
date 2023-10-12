@@ -156,25 +156,25 @@ class Neptune_Thumbnail:
                 s = s.replace(' :', ' ').strip(': ')
                 if ':' not in s:
                     s = '00:' + s
-                self.print_duration_formatted = s
+                self.print_duration_formatted = '◴' + s
             else:
-                self.print_duration_formatted = self.print_duration
+                self.print_duration_formatted = '◴' + self.print_duration
 
 
         filament_used = []
         if self.filament_used_weight is not None:
-            self.filament_used_weight_formatted = str(round(float(self.filament_used_weight))) + 'g'
+            self.filament_used_weight_formatted = '🏋' + str(round(float(self.filament_used_weight))) + 'g'
             filament_used.append(self.filament_used_weight_formatted)
 
         if self.filament_used_length is not None:
-            self.filament_used_length_formatted = str(round(float(self.filament_used_length) / 1000)) + 'm'
+            self.filament_used_length_formatted = '📏' + str(round(float(self.filament_used_length) / 1000)) + 'm'
             filament_used.append(self.filament_used_length_formatted)
 
         if filament_used:
             self.filament_used_formatted = ', '.join(filament_used)
 
         if self.max_height > 0:
-            self.max_height_formatted = '{:d}'.format(round(self.max_height)) + 'mm'
+            self.max_height_formatted = '↥' + '{:d}'.format(round(self.max_height)) + 'mm'
 
 
     def image_decode(self, text) -> QImage:
@@ -241,8 +241,11 @@ class Neptune_Thumbnail:
         if self.max_height_formatted is not None:
             painter.drawText(rect_top, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop, self.max_height_formatted)
 
-        if self.filament_used_formatted is not None:
-            painter.drawText(rect_bottom, Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignBottom, self.filament_used_formatted)
+        if self.filament_used_weight_formatted is not None:
+            painter.drawText(rect_bottom, Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignBottom, self.filament_used_weight_formatted)
+
+        if self.filament_used_length_formatted is not None:
+            painter.drawText(rect_bottom, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignBottom, self.filament_used_length_formatted)
 
         painter.end()
 
