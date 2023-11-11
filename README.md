@@ -5,8 +5,7 @@
 This package converts the thumbnail that PrusaSlicer/OrcaSlicer bakes into the g-code file into the format that is read by the Neptune printers.
 
 <img src="images/screenshot.png" />
-<img src="images/ScreenshotPrusaSlicer2.jpg" width="300" />
-<img src="images/ScreenshotOrcaSlicer2.jpg" width="300" />
+<img src="images/ScreenshotPrusaSlicer2.jpg" width="300" /> <img src="images/ScreenshotOrcaSlicer2.jpg" width="300" />
 
 
 ## Why another mod?
