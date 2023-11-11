@@ -1,8 +1,8 @@
-# Yet another PrusaSlicer thumbnail script for Elegoo Neptune
+# Yet another PrusaSlicer/OrcaSlicer thumbnail script for Elegoo Neptune
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 
-This package converts the thumbnail that PrusaSlicer bakes into the g-code file into the format that is read by the Neptune printers.
+This package converts the thumbnail that PrusaSlicer/OrcaSlicer bakes into the g-code file into the format that is read by the Neptune printers.
 
 <img src="images/screenshot.png" />
 <img src="images/ScreenshotPrusaSlicer2.jpg" width="300" />
@@ -27,19 +27,20 @@ Notable changes:
 - Unzip the executable and put it to desired location.
 
 
-## How to Setup PrusaSlicer for Post-Process Scripts
+## How to Setup PrusaSlicer/OrcaSlicer for Post-Process Scripts
 
-- 'Printer Settings' -- put something like `200x200` in 'Format of G-code thumbnails' (do not go too high in image resolution as the image injected in script by PrusaSlicer will be resized to 200x200 by the script anyway) and select `PNG` or `JPG` in 'Format of G-code thumbnails' (it may also work with QOI but I have not tested it):
-  <img src="images/printer_settings.png" width="720" />
+- 'Printer Settings' -- put something like `200x200` in 'Format of G-code thumbnails' (do not go too high in image resolution as the image injected in script by PrusaSlicer/OrcaSlicer will be resized to 200x200 by the script anyway) and select `PNG` or `JPG` in 'Format of G-code thumbnails' (it may also work with QOI but I have not tested it):
+<img src="images/printer_settings.png" width="720" />
+
 - 'Print Settings' / 'Post-processing scripts' - specify path to executable: `"C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.exe";`:
-  <img src="images/print_settings.png" width="720" />
+<img src="images/print_settings.png" width="720" />
 
-PrusaSlicer should now run the thumbnail.exe when you export your g-code.
+PrusaSlicer/OrcaSlicer should now run the thumbnail.exe when you export your g-code.
 In case of issues - check `thumbnail.log`.
 
 If you do not specify any options, the first thumbnail from g-code file that is bigger than 100x100 will be used: decoded, resized to 200x200 + 160x160, encoded into new format and baked back into g-code file.
 
-If PrusaSlicer is configured to add more than one thumbnail into g-code file, you can specify what thumbnail the script should use with option:
+If PrusaSlicer/OrcaSlicer is configured to add more than one thumbnail into g-code file, you can specify what thumbnail the script should use with option:
 `--image_size WIDTHxHEIGHT`
 
 
@@ -81,7 +82,7 @@ Use the `--old_printer` argument for these printers:
 - NEPTUNE X
 
 
-Tested with PrusaSlicer 2.6.1 and Neptune 4
+Tested with PrusaSlicer 2.6.1, OrcaSlicer 1.8.0-beta1 and Neptune 4
 
 Apple silicone will not work on the release. In order to run, you must run the script through an x86 python otherwise the dlls will not work. You can do this by installing the x86 Homebrew and Rosetta 2.
 
@@ -98,7 +99,7 @@ Apple silicone will not work on the release. In order to run, you must run the s
   Without this option the first thumbnail that is bigger than 100x100px from g-code file will be used.
   If specified, the script will try to find in g-code thumbnail with the specified image size. Script will report error if such thumbnail is not found. So I'd recommend not to use the option at all and only specify size 200x200 in 'Printer Settings'.
 
-To add script's command line option in PrusaSlicer, make sure you wrap them in double quotes:
+To add script's command line option in PrusaSlicer/OrcaSlicer, make sure you wrap them in double quotes:
 `"C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.exe" "--image_size" "300x300";`
 
 
