@@ -29,9 +29,10 @@ Notable changes:
 ## How to Setup PrusaSlicer/OrcaSlicer for Post-Process Scripts
 
 - 'Printer Settings' -- put something like `200x200` in 'Format of G-code thumbnails' (do not go too high in image resolution as the image injected in script by PrusaSlicer/OrcaSlicer will be resized to 200x200 by the script anyway) and select `PNG` or `JPG` in 'Format of G-code thumbnails' (it may also work with QOI but I have not tested it):
-  <img src="images/printer_settings.png" width="720" />
+<img src="images/printer_settings.png" width="720" />
+
 - 'Print Settings' / 'Post-processing scripts' - specify path to executable: `"C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.exe";`:
-  <img src="images/print_settings.png" width="720" />
+<img src="images/print_settings.png" width="720" />
 
 PrusaSlicer/OrcaSlicer should now run the thumbnail.exe when you export your g-code.
 In case of issues - check `thumbnail.log`.
