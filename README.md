@@ -20,7 +20,8 @@ Notable changes:
 - Easier installation: image size should only be specified in printer settings and the script accepts PNG and JPG;
 - More information on thumbnail: print duration, used filament weight, used filament length and model height;
 - Better texts quality: texts added after image resizing, font size and texts positions adjusted automatically;
-- Adjust g-code so completed percentage and remaining time are displayed correctly under the thumbnail (you need to tick "Support remaining times" checkbox in Printer Settings).
+- Adjust g-code so completed percentage and remaining time are displayed correctly under the thumbnail (you need to tick "Support remaining times" checkbox in Printer Settings);
+- Supports PrusaSlicer and OrcaSlicer (the later one needed some additional tweaks to all above works fine).
 
 
 ## Installation
