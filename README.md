@@ -20,7 +20,8 @@ Notable changes:
 - Easier installation: image size should only be specified in printer settings and the script accepts PNG and JPG;
 - More information on thumbnail: print duration, used filament weight, used filament length and model height;
 - Better texts quality: texts added after image resizing, font size and texts positions adjusted automatically;
-- Adjust g-code so completed percentage and remaining time are displayed correctly under the thumbnail (you need to tick "Support remaining times" checkbox in Printer Settings).
+- Adjust g-code so completed percentage and remaining time are displayed correctly under the thumbnail (you need to tick "Support remaining times" checkbox in Printer Settings);
+- Supports PrusaSlicer and OrcaSlicer (the later one needed some additional tweaks to all above works fine).
 
 
 ## Installation
@@ -31,16 +32,18 @@ Notable changes:
 
 ## How to Setup PrusaSlicer/OrcaSlicer for Post-Process Scripts
 
-- 'Printer Settings' -- put something like `200x200` in 'Format of G-code thumbnails' (do not go too high in image resolution as the image injected in script by PrusaSlicer/OrcaSlicer will be resized to 200x200 by the script anyway) and select `PNG` or `JPG` in 'Format of G-code thumbnails' (it may also work with QOI but I have not tested it):
+- `Printer Settings` / `G-code thumbnails` -- put something like `200x200` (do not go too high in image resolution as the image will be resized to 200x200 by the script anyway and Klipper UI does not show big images as well, so I'd say something like 300x300 is more than enough);
+
+- In `Format of G-code thumbnails` select `PNG` or `JPG`:
 <img src="images/printer_settings.png" width="720" />
 
-- 'Print Settings' / 'Post-processing scripts' - specify path to executable: `"C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.exe";`:
+- `Print Settings` / `Post-processing scripts` - specify path to executable: `"C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.exe";`:
 <img src="images/print_settings.png" width="720" />
 
 PrusaSlicer/OrcaSlicer should now run the thumbnail.exe when you export your g-code.
 In case of issues - check `thumbnail.log`.
 
-If you do not specify any options, the first thumbnail from g-code file that is bigger than 100x100 will be used: decoded, resized to 200x200 + 160x160, encoded into new format and baked back into g-code file.
+If you do not specify any options, the first thumbnail from g-code file that is bigger than 100x100 will be used: decoded, resized to 200x200 + 160x160, encoded into new format and injected back into g-code file.
 
 If PrusaSlicer/OrcaSlicer is configured to add more than one thumbnail into g-code file, you can specify what thumbnail the script should use with option:
 `--image_size WIDTHxHEIGHT`
