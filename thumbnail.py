@@ -17,7 +17,7 @@ from ctypes import *
 from io import BytesIO
 from os import path, replace
 
-from PyQt6.QtCore import Qt, QRect
+from PyQt6.QtCore import Qt, QRect, QRectF, QByteArray, QBuffer, QIODeviceBase
 from PyQt6.QtGui import QColor, QFont, QGuiApplication, QImage, QPainter
 
 
@@ -49,8 +49,16 @@ def extract_value(line, key) -> str:
 app = QGuiApplication(sys.argv)
 
 
+def draw_text(painter: QPainter, rect: QRect, text: str, flags: int, color: QColor = QColor(Qt.GlobalColor.white), bgcolor: QColor = None):
+    if bgcolor is not None:
+        boundingRect = painter.boundingRect(rect, flags, text)
+        painter.fillRect(QRectF(boundingRect), bgcolor)
+    painter.setPen(color)
+    painter.drawText(rect, flags, text)
+
+
 class Neptune_Thumbnail:
-    def __init__(self, input_file, old_printer=False, image_size=None, debug=False, short_duration_format=False):
+    def __init__(self, input_file, old_printer=False, image_size=None, debug=False, short_duration_format=False, update_original_image=False):
         self.input_file = input_file
         self.debug = debug
         self.filament_cost = None
@@ -60,17 +68,21 @@ class Neptune_Thumbnail:
         self.filament_used_length_formatted = None
         self.header = ''
         self.header_line = None
+        self.img_base64_block_len = 78
         self.img_encoded = ''
         self.img_encoded_begin = None
         self.img_encoded_end = None
         self.img_size = image_size
-        self.img_type = 'PNG'
+        self.img_type = None
+        self.img_type_detected = None
         self.img_width = None
         self.img_height = None
         self.max_height = 0
         self.print_duration = None
         self.print_duration_formatted = None
         self.print_duration_short_format = short_duration_format
+        self.update_original_image = update_original_image
+        self.orca_mask = 'Orca-Slicer'
         self.prusa_mask = 'Prusa-Slicer'
         self.run_old_printer = old_printer
 
@@ -83,6 +95,8 @@ class Neptune_Thumbnail:
             logger.info('Using short pring duration format')
         if self.run_old_printer:
             logger.info('Using older printer settings')
+        if self.update_original_image:
+            logger.info('Original inage will be updated')
 
 
     def log_debug(self, str):
@@ -187,7 +201,7 @@ class Neptune_Thumbnail:
 
     def image_decode(self, text) -> QImage:
         """
-        Decodes base64 encode image to QImage
+        Decodes base64 encoded image to QImage
         """
         if not text:
             raise Exception('Thumbnail text is empty')
@@ -198,7 +212,9 @@ class Neptune_Thumbnail:
         image_stream = BytesIO(decode_data)
         img: QImage = QImage.fromData(image_stream.getvalue())
 
+        self.img_type_detected = 'PNG'
         if img.format() != QImage.Format.Format_ARGB32:
+            self.img_type_detected = 'JPG'
             img = img.convertToFormat(QImage.Format.Format_ARGB32)
 
         return img
@@ -229,36 +245,42 @@ class Neptune_Thumbnail:
         self.log_debug('Adding texts to image')
 
         img_size = img.size()
-        font_size = int(img_size.width() / 14);
+        font_size = int(img_size.height() / 14);
 
-        rect_top = QRect(0, 0, img_size.width() - 2, int(img_size.height() / 2) - 1)
-        rect_bottom = QRect(0, int(img_size.height() / 2), img_size.width() - 2, int(img_size.height() / 2) - 1)
+        rect_top = QRect(0, 0, img_size.width(), int(img_size.height() / 2) - 1)
+        rect_bottom = QRect(0, int(img_size.height() / 2), img_size.width(), int(img_size.height() / 2))
 
         font = QFont('Arial', font_size)
         font.setStyleHint(QFont.StyleHint.AnyStyle, QFont.StyleStrategy.ForceOutline)
+
+        color = QColor(Qt.GlobalColor.white)
+        bgcolor = QColor(Qt.GlobalColor.black)
 
         painter = QPainter()
         painter.begin(img)
 
         painter.setFont(font)
-        painter.setPen(QColor(Qt.GlobalColor.white))
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
         if self.print_duration_formatted is not None:
-            painter.drawText(rect_top, Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop, self.print_duration_formatted)
+            draw_text(painter, rect_top, self.print_duration_formatted, Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop, color, bgcolor)
 
         if self.max_height_formatted is not None:
-            painter.drawText(rect_top, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop, self.max_height_formatted)
+            draw_text(painter, rect_top, self.max_height_formatted, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop, color, bgcolor)
 
         if self.filament_used_weight_formatted is not None:
-            painter.drawText(rect_bottom, Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignBottom, self.filament_used_weight_formatted)
+            draw_text(painter, rect_bottom, self.filament_used_weight_formatted, Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignBottom, color, bgcolor)
 
         if self.filament_used_length_formatted is not None:
-            painter.drawText(rect_bottom, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignBottom, self.filament_used_length_formatted)
+            draw_text(painter, rect_bottom, self.filament_used_length_formatted, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignBottom, color, bgcolor)
 
         painter.end()
 
         if self.debug:
-            img.save(path.join(script_dir, 'img-' + str(img_size.width()) + 'x' + str(img_size.height()) + '.' + self.img_type.lower()))
+            img_type = self.img_type
+            if img_type is None:
+                img_type = 'PNG'
+            img.save(path.join(script_dir, 'img-' + str(img_size.width()) + 'x' + str(img_size.height()) + '.' + img_type.lower()))
 
         return img
 
@@ -380,6 +402,26 @@ class Neptune_Thumbnail:
         return result + '\r'
 
 
+    def image_encode_klipper(self, img: QImage, img_type: str, base64_block_len: int) -> str:
+        """
+        Generate image in original Klipper format (base64 with prefix & suffix)
+        """
+        result: str = '\n'
+        byte_array: QByteArray = QByteArray()
+        byte_buffer: QBuffer = QBuffer(byte_array)
+        byte_buffer.open(QIODeviceBase.OpenModeFlag.WriteOnly)
+        img.save(byte_buffer, img_type)
+        base64: str = str(byte_array.toBase64().data(), "UTF-8")
+        base64_len: int = len(base64)
+        result += f'; thumbnail begin {img.width()}x{img.height()} {base64_len}\n'
+        pos: int = 0
+        while pos < base64_len:
+            result += f'; {base64[pos:pos+base64_block_len]}\n'
+            pos += base64_block_len
+        result += f'; thumbnail end\n\n'
+        return result
+
+
     def run(self):
         """
         Main runner for executable
@@ -394,22 +436,26 @@ class Neptune_Thumbnail:
 
         self.log_debug('Modifying g-code file')
 
-        # seeing if this works for N4 printer thanks to Molodos: https://github.com/Molodos/ElegooNeptuneThumbnails-Prusa
-        header = self.header.replace('PrusaSlicer', self.prusa_mask)
-        header += '\n; Cura_SteamEngine X.X to trick printer into thinking this is Cura\n\n'
-
         img = self.image_decode(self.img_encoded)
-
         img_200x200 = self.image_modify(self.image_resize(img, 200, 200))
+        if self.update_original_image:
+            img_klipper = self.image_encode_klipper(self.image_modify(QImage(img)), self.img_type_detected, self.img_base64_block_len)
 
+        header = ''
+
+        # Adding image at the very beginning as some reports that comments before image breaks it on some neptune printers
         if self.run_old_printer:
-            header += self.image_encode(img_200x200, ';gimage:')
             header += self.image_encode(self.image_modify(self.image_resize(img, 100, 100)), ';simage:')
+            header += self.image_encode(img_200x200, ';gimage:')
         else:
             header += self.image_encode_new(img_200x200, ';gimage:')
             header += self.image_encode_new(self.image_modify(self.image_resize(img, 160, 160)), ';simage:')
 
-        header += '\n\n; Thumbnail Generated by ElegooNeptuneThumbnailPrusaMod\n\n'
+        header += '\n\n; Thumbnail Generated by ElegooNeptuneThumbnailPrusaMod\n'
+        # seeing if this works for N4 printer thanks to Molodos: https://github.com/Molodos/ElegooNeptuneThumbnails-Prusa
+        header += '; Just mentioning Cura_SteamEngine X.X to trick printer into thinking this is Cura\n\n'
+
+        header += self.header.replace('PrusaSlicer', self.prusa_mask).replace('OrcaSlicer', self.orca_mask)
 
         output_file = self.input_file + '.output'
         with open(self.input_file, 'r', encoding='utf8') as input, open(output_file, 'w', encoding='utf8') as output:
@@ -421,9 +467,14 @@ class Neptune_Thumbnail:
             for index, line in enumerate(input):
                 if index == self.header_line:
                     continue
-                if line.startswith(';LAYER_CHANGE'):
-                    if time_elapsed is not None:
-                        output.write(';TIME_ELAPSED:' + str(time_elapsed) + '\n');
+                if self.update_original_image:
+                    if index > self.img_encoded_begin and index <= self.img_encoded_end:
+                        continue
+                    if index == self.img_encoded_begin:
+                        output.write(img_klipper)
+                        continue
+                if time_elapsed is not None and line.startswith(';LAYER_CHANGE'):
+                    output.write(';TIME_ELAPSED:' + str(time_elapsed) + '\n');
                 if line.startswith('M73 P'):
                     # Converting 'M73 P<percentage-completed> R<time-left-in-minutes>' to ';TIME:<print-duration-in-seconds>' + ';TIME_ELAPSED:<time-elapsed-in-seconds>'
                     (percentage, time_to_end) = line[5:].split(' R')
@@ -473,6 +524,12 @@ if __name__ == '__main__':
             help='Use short print duration format (DDd HH:MM)',
         )
         parser.add_argument(
+            '--update_original_image',
+            default=False,
+            action='store_true',
+            help='Inject additional information into original image',
+        )
+        parser.add_argument(
             '--debug',
             default=False,
             action='store_true',
@@ -480,7 +537,14 @@ if __name__ == '__main__':
         )
 
         args = parser.parse_args()
-        obj = Neptune_Thumbnail(args.input_file, old_printer=args.old_printer, image_size=args.image_size, debug=args.debug, short_duration_format=args.short_duration_format)
+        obj = Neptune_Thumbnail(
+            args.input_file,
+            debug=args.debug,
+            image_size=args.image_size,
+            old_printer=args.old_printer,
+            short_duration_format=args.short_duration_format,
+            update_original_image=args.update_original_image
+        )
         obj.run()
     except Exception as ex:
         logger.exception('Error occurred while running application.')
