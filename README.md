@@ -103,6 +103,8 @@ Apple silicone will not work on the release. In order to run, you must run the s
 - `--image_size 200x200`
   Without this option the first thumbnail that is bigger than 100x100px from g-code file will be used.
   If specified, the script will try to find in g-code thumbnail with the specified image size. Script will report error if such thumbnail is not found. So I'd recommend not to use the option at all and only specify size 200x200 in 'Printer Settings'.
+- `--update_original_image`
+  Original image (that is used by Klipper) is also modified with text info
 
 To add script's command line option in PrusaSlicer/OrcaSlicer, make sure you wrap them in double quotes:
 `"C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.exe" "--image_size" "300x300";`
