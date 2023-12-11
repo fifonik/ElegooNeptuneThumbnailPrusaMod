@@ -58,7 +58,7 @@ def draw_text(painter: QPainter, rect: QRect, text: str, flags: int, color: QCol
 
 
 class Neptune_Thumbnail:
-    def __init__(self, input_file, old_printer=False, image_size=None, debug=False, short_duration_format=False, update_original_image=False):
+    def __init__(self, input_file, old_printer=False, image_size=None, debug=False, short_duration_format=False, update_original_image=False, original_image_light_theme=False):
         self.input_file = input_file
         self.debug = debug
         self.filament_cost = None
@@ -78,6 +78,7 @@ class Neptune_Thumbnail:
         self.img_width = None
         self.img_height = None
         self.max_height = 0
+        self.original_image_light_theme = original_image_light_theme
         self.print_duration = None
         self.print_duration_formatted = None
         self.print_duration_short_format = short_duration_format
@@ -184,16 +185,16 @@ class Neptune_Thumbnail:
                 s = s.replace(' :', ' ').strip(': ')
                 if ':' not in s:
                     s = '00:' + s
-                self.print_duration_formatted = '⌚' + s
+                self.print_duration_formatted = '⧖' + s
             else:
-                self.print_duration_formatted = '⌚' + self.print_duration
+                self.print_duration_formatted = '⧖' + self.print_duration
 
 
         if self.filament_used_weight is not None:
-            self.filament_used_weight_formatted = '🏋' + myround(self.filament_used_weight) + 'g'
+            self.filament_used_weight_formatted = '🡇' + myround(self.filament_used_weight) + 'g'
 
         if self.filament_used_length is not None:
-            self.filament_used_length_formatted = '📏' + myround(self.filament_used_length, 1000) + 'm'
+            self.filament_used_length_formatted = '🠦' + myround(self.filament_used_length, 1000) + 'm'
 
         if self.max_height > 0:
             self.max_height_formatted = '⤒' + '{:d}'.format(round(self.max_height)) + 'mm'
@@ -235,7 +236,7 @@ class Neptune_Thumbnail:
         return img.scaled(width, height, Qt.AspectRatioMode.KeepAspectRatio)
 
 
-    def image_modify(self, img: QImage) -> QImage:
+    def image_modify(self, img: QImage, light_theme: bool=False) -> QImage:
         """
         Add texts to image
         """
@@ -253,8 +254,13 @@ class Neptune_Thumbnail:
         font = QFont('Arial', font_size)
         font.setStyleHint(QFont.StyleHint.AnyStyle, QFont.StyleStrategy.ForceOutline)
 
-        color = QColor(Qt.GlobalColor.white)
-        bgcolor = QColor(Qt.GlobalColor.black)
+        bgcolor = None
+        if light_theme:
+            color = QColor(Qt.GlobalColor.black)
+            #bgcolor = QColor(Qt.GlobalColor.white)
+        else:
+            color = QColor(Qt.GlobalColor.white)
+            #bgcolor = QColor(Qt.GlobalColor.black)
 
         painter = QPainter()
         painter.begin(img)
@@ -439,7 +445,7 @@ class Neptune_Thumbnail:
         img = self.image_decode(self.img_encoded)
         img_200x200 = self.image_modify(self.image_resize(img, 200, 200))
         if self.update_original_image:
-            img_klipper = self.image_encode_klipper(self.image_modify(QImage(img)), self.img_type_detected, self.img_base64_block_len)
+            img_klipper = self.image_encode_klipper(self.image_modify(QImage(img), self.original_image_light_theme), self.img_type_detected, self.img_base64_block_len)
 
         header = ''
 
@@ -530,6 +536,12 @@ if __name__ == '__main__':
             help='Inject additional information into original image',
         )
         parser.add_argument(
+            '--original_image_light_theme',
+            default=False,
+            action='store_true',
+            help='Original image should be modified for light Klipper theme',
+        )
+        parser.add_argument(
             '--debug',
             default=False,
             action='store_true',
@@ -543,7 +555,8 @@ if __name__ == '__main__':
             image_size=args.image_size,
             old_printer=args.old_printer,
             short_duration_format=args.short_duration_format,
-            update_original_image=args.update_original_image
+            update_original_image=args.update_original_image,
+            original_image_light_theme=args.original_image_light_theme
         )
         obj.run()
     except Exception as ex:
