@@ -6,8 +6,8 @@ This package converts the thumbnail that PrusaSlicer/OrcaSlicer bakes into the g
 
 <img src="images/screenshot.png" />
 <p float="left">
-  <img src="images/ScreenshotPrusaSlicer2.jpg" width="300" />
-  <img src="images/ScreenshotOrcaSlicer2.jpg" width="300" />
+  <img src="images/ScreenshotPrusaSlicer1.jpg" width="300" />
+  <img src="images/ScreenshotOrcaSlicer1.jpg" width="300" />
 </p>
 
 
