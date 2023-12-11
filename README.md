@@ -21,6 +21,7 @@ Notable changes:
 - More information on thumbnail: print duration, used filament weight, used filament length and model height;
 - Better texts quality: texts added after image resizing, font size and texts positions adjusted automatically;
 - Adjust g-code so completed percentage and remaining time are displayed correctly under the thumbnail (you need to tick "Support remaining times" checkbox in Printer Settings);
+- Adjust original image that is displayed in Klipper UI (for both light and dark themes)
 - Supports PrusaSlicer and OrcaSlicer (the later one needed some additional tweaks to all above works fine).
 
 
