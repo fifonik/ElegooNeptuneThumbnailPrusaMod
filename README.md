@@ -106,7 +106,7 @@ Apple silicone will not work on the release. In order to run, you must run the s
 - `--update_original_image`
   Original image (that is used by Klipper) is also modified with text info
 - `--original_image_light_theme`
-  Adjust original image modifications for light Klipper theme
+  Original image modifications are for light Klipper theme
 
 To add script's command line option in PrusaSlicer/OrcaSlicer, make sure you wrap them in double quotes:
 `"C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.exe" "--image_size" "300x300";`
