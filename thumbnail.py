@@ -561,3 +561,9 @@ if __name__ == '__main__':
         obj.run()
     except Exception as ex:
         logger.exception('Error occurred while running application.')
+
+
+
+
+
+# Python sux. I hate it.
