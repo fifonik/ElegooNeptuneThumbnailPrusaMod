@@ -64,7 +64,7 @@ If PrusaSlicer/OrcaSlicer is configured to add more than one thumbnail into g-co
 If you do not want to run the supplied executable (as myself), you can always run the Python script directly:
 - Install Python;
 - Clone the repo (or download `thumbnail.py`);
-- In `Print Settings` / 'Post-processing scripts' put `"C:\path\to\python.exe" "C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.py";`
+- In `Print Settings` / `Post-processing scripts` put `"C:\path\to\python.exe" "C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.py";`
 - If you want to hide the terminal window use: `"C:\path\to\pythonw.exe" "C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.py";`
 
 
