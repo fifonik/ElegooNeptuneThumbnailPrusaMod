@@ -5,15 +5,17 @@
 This package converts the thumbnail that PrusaSlicer/OrcaSlicer bakes into the g-code file into the format that is read by the Neptune printers.
 
 Example of modified image (you can get the same while use it with option `--debug`):
+
 <img src="images/screenshot.png" />
 
-Photos of Neptune 4 screen (left -- gcode generated from Prusa, right -- Orca):
+Photos of Neptune 4 screen (left -- from Prusa, right -- from Orca):
 <p float="left">
   <img src="images/ScreenshotPrusaSlicer1.jpg" width="300" />
   <img src="images/ScreenshotOrcaSlicer1.jpg" width="300" />
 </p>
 
 Example of modified image in Klipper UI:
+
 <img src="images/klipper.png" />
 
 
