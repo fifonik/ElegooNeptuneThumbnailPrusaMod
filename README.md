@@ -65,13 +65,13 @@ If you do not want to run the supplied executable (as myself), you can always ru
 - Install Python;
 - Clone the repo (or download `thumbnail.py`);
 - In `Print Settings` / `Post-processing scripts` put `"C:\path\to\python.exe" "C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.py";`
-- If you want to hide the terminal window use: `"C:\path\to\pythonw.exe" "C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.py";`
+- Or, to hide the terminal window: `"C:\path\to\pythonw.exe" "C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.py";`
 
 
 ## Building your own executable from the Python script
 
 - Install Python;
-- Install `pyinstaller`: `pip install pyinstaller`;
+- Install pyinstaller: `pip install pyinstaller`;
 - Clone the repo;
 - Open console, navigate to the repo folder and run `pyinstaller build.spec` or just run supplied `build.bat` => `thumbnail.exe` will be created in `dist` folder.
 
