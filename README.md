@@ -9,6 +9,7 @@ This package converts the thumbnail that PrusaSlicer/OrcaSlicer bakes into the g
   <img src="images/ScreenshotPrusaSlicer1.jpg" width="300" />
   <img src="images/ScreenshotOrcaSlicer1.jpg" width="300" />
 </p>
+<img src="images/klipper.png" />
 
 
 ## Why another mod?
