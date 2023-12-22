@@ -78,6 +78,7 @@ class Neptune_Thumbnail:
         self.img_width = None
         self.img_height = None
         self.max_height = 0
+        self.max_height_formatted = None
         self.original_image_light_theme = original_image_light_theme
         self.print_duration = None
         self.print_duration_formatted = None
