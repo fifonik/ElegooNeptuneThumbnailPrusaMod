@@ -43,7 +43,7 @@ Notable changes:
 
 1. `Printer Settings` / `General` / `G-code thumbnails` -- put something like `300x300`;
 2. `Printer Settings` / `General` / `Format of G-code thumbnails` select `PNG` or `JPG`:
-3. `Print Settings` / `Output options` / `Post-processing scripts` - specify path to executable: `"C:\Your\Path\To\thumbnail.exe";`:
+3. `Print Settings` / `Output options` / `Post-processing scripts` - specify path to executable: `"C:\Path\Where\You\Put\thumbnail.exe";`:
 <img src="images/printer_settings.png" width="720" />
 <img src="images/print_settings.png" width="720" />
 
@@ -52,7 +52,7 @@ Notable changes:
 
 - `Printer Settings` / `Basic information` / `G-code thumbnails` -- put something like `300x300`;
 - `Printer Settings` / `Basic information` / `Format of G-code thumbnails` select `PNG` or `JPG`;
-- `Print Settings` / `Others` / `Post-processing Scripts` - specify path to executable: `"C:\Your\Path\To\thumbnail.exe";`:
+- `Print Settings` / `Others` / `Post-processing Scripts` - specify path to executable: `"C:\Path\Where\You\Put\thumbnail.exe";`:
 <img src="images/orca_setup.png" width="720" />
 
 
@@ -69,15 +69,15 @@ If PrusaSlicer/OrcaSlicer is configured to add more than one thumbnail into g-co
 ## Running from the Python script
 
 If you do not want to run the supplied executable (as myself), you can always run the Python script directly:
-- Install Python;
+- Install Python (remember directory where you installed it);
 - Clone the repo (or download `thumbnail.py`);
-- In `Print Settings` / `Post-processing scripts` put `"C:\path\to\python.exe" "C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.py";`
-- Or, to hide the terminal window: `"C:\path\to\pythonw.exe" "C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.py";`
+- In `Post-processing scripts` put `"C:\Path\Where\You\Installed\python.exe" "C:\Path\Where\You\Put\thumbnail.py";`
+- Or, to hide the terminal window: `"C:\Path\Where\You\Installed\pythonw.exe" "C:\Path\Where\You\Put\thumbnail.py";`
 
 
 ## Building your own executable from the Python script
 
-- Install Python;
+- Install Python (remember directory where you installed it);
 - Install pyinstaller: `pip install pyinstaller`;
 - Clone the repo;
 - Open console, navigate to the repo folder and run `pyinstaller build.spec` or just run supplied `build.bat` => `thumbnail.exe` will be created in `dist` folder.
