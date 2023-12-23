@@ -44,8 +44,8 @@ Notable changes:
 1. `Printer Settings` / `G-code thumbnails` -- put something like `300x300`;
 2. `Printer Settings` / `Format of G-code thumbnails` select `PNG` or `JPG`:
 3. `Print Settings` / `Output options` / `Post-processing scripts` - specify path to executable: `"C:\Your\Path\To\thumbnail.exe";`:
-<img src="images/print_settings.png" width="720" />
 <img src="images/printer_settings.png" width="720" />
+<img src="images/print_settings.png" width="720" />
 
 
 ## How to configure OrcaSlicer:
