@@ -39,15 +39,22 @@ Notable changes:
 - Unzip the executable and put it to desired location.
 
 
-## How to Setup PrusaSlicer/OrcaSlicer for Post-Process Scripts
+## How to configure PrusaSlicer:
 
-- `Printer Settings` / `G-code thumbnails` -- put something like `300x300` (do not go too high in image resolution as the image will be scaled down to 200x200 by the script anyway and Klipper UI does not show big images as well, so 300x300 is the best choice from my point of view);
-
-- In `Format of G-code thumbnails` select `PNG` or `JPG`:
+1. `Printer Settings` / `G-code thumbnails` -- put something like `300x300`;
+2. `Printer Settings` / `Format of G-code thumbnails` select `PNG` or `JPG`:
+3. `Print Settings` / `Output options` / `Post-processing scripts` - specify path to executable: `"C:\Your\Path\To\thumbnail.exe";`:
+<img src="images/print_settings.png" width="720" />
 <img src="images/printer_settings.png" width="720" />
 
-- `Print Settings` / `Post-processing scripts` - specify path to executable: `"C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.exe";`:
-<img src="images/print_settings.png" width="720" />
+
+## How to configure OrcaSlicer:
+
+- `Printer Settings` / `Basic information` / `G-code thumbnails` -- put something like `300x300`;
+- `Printer Settings` / `Basic information` / `Format of G-code thumbnails` select `PNG` or `JPG`;
+- `Print Settings` / `Others` / `Post-processing Scripts` - specify path to executable: `"C:\Your\Path\To\thumbnail.exe";`:
+<img src="images/orca_setup.png" width="720" />
+
 
 PrusaSlicer/OrcaSlicer should now run the thumbnail.exe when you export your g-code.
 In case of issues - check `thumbnail.log`.
