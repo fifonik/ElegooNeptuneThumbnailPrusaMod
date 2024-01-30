@@ -103,7 +103,7 @@ Use the `--old_printer` argument for these printers:
 - NEPTUNE X
 
 
-Tested with PrusaSlicer 2.6.1/2.7.0, OrcaSlicer 1.8.0-beta1/1.8.0/1.8.1 on Neptune 4.
+Tested with PrusaSlicer 2.6.1/2.7.0, OrcaSlicer 1.8.0/1.8.1/1.9.0 on Neptune 4.
 
 Apple silicone will not work on the release. In order to run, you must run the script through an x86 python otherwise the dlls will not work. You can do this by installing the x86 Homebrew and Rosetta 2.
 
