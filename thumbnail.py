@@ -98,7 +98,7 @@ class Neptune_Thumbnail:
         if self.run_old_printer:
             logger.info('Using older printer settings')
         if self.update_original_image:
-            logger.info('Original inage will be updated')
+            logger.info('Original image will be updated')
 
 
     def log_debug(self, str):
