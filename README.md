@@ -70,7 +70,7 @@ If PrusaSlicer/OrcaSlicer is configured to add more than one thumbnail into g-co
 
 If you do not want to run the supplied executable (as myself), you can always run the Python script directly:
 - Install Python (remember directory where you installed it);
-- Clone the repo (or download `thumbnail.py`);
+- Clone the repo (or download `thumbnail.py` + `ColPic_X64.dll` and put them into the same folder);
 - In `Post-processing scripts` put `"C:\Path\Where\You\Installed\python.exe" "C:\Path\Where\You\Put\thumbnail.py";`
 - Or, to hide the terminal window: `"C:\Path\Where\You\Installed\pythonw.exe" "C:\Path\Where\You\Put\thumbnail.py";`
 
