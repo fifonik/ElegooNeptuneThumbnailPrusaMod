@@ -198,7 +198,7 @@ class Neptune_Thumbnail:
             self.filament_used_length_formatted = '🠦' + myround(self.filament_used_length, 1000) + 'm'
 
         if self.max_height > 0:
-            self.max_height_formatted = '⤒' + '{:d}'.format(round(self.max_height)) + 'mm'
+            self.max_height_formatted = '⤒' + '{:.1f}'.format(round(self.max_height, 1)) + 'mm'
 
 
     def image_decode(self, text) -> QImage:
