@@ -8,9 +8,9 @@ added_files = [
 ]
 
 a = Analysis(
-    ['thumbnail.py'],
+    ['thumbnail.py', 'lib_col_pic.py'],
     pathex=[],
-    binaries=[('ColPic_X64.dll', '.'), ('libColPic.dylib', '.'), ('libColPic.so', '.')],
+    binaries=[],
     datas=added_files,
     hiddenimports=[],
     hookspath=[],
