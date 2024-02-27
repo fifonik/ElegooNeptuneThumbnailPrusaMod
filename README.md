@@ -131,7 +131,7 @@ To add script's command line option in PrusaSlicer/OrcaSlicer, make sure you wra
 
 This repository is based on:
 - [TheJMaster28/ElegooNeptuneThumbnailPrusa](https://github.com/TheJMaster28/ElegooNeptuneThumbnailPrusa)
-- [Molodos/ElegooNeptuneThumbnails](https://github.com/Molodos/ElegooNeptuneThumbnails)
+- [Molodos/ElegooNeptuneThumbnails-Prusa](https://github.com/Molodos/ElegooNeptuneThumbnails-Prusa)
 - [sigathi/ElegooN3Thumbnail](https://github.com/sigathi/ElegooN3Thumbnail)
 
 Therefore it is released under the **AGPL v3** license.
