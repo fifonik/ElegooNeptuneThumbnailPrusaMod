@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # Copyright (c) 2023 fifonik
 # Copyright (c) 2023 TheJMaster28
 # Copyright (c) 2023 Molodos
@@ -12,6 +14,7 @@ import logging
 import platform
 import re
 import sys
+
 from array import array
 from ctypes import *
 from io import BytesIO
@@ -20,6 +23,7 @@ from os import path, replace
 from PyQt6.QtCore import Qt, QRect, QRectF, QByteArray, QBuffer, QIODeviceBase
 from PyQt6.QtGui import QColor, QFont, QGuiApplication, QImage, QPainter
 
+import lib_col_pic
 
 script_dir = path.dirname(sys.argv[0])
 log_file = path.join(script_dir, path.splitext(sys.argv[0])[0] + '.log')
@@ -186,19 +190,21 @@ class Neptune_Thumbnail:
                 s = s.replace(' :', ' ').strip(': ')
                 if ':' not in s:
                     s = '00:' + s
-                self.print_duration_formatted = '⧖' + s
+                self.print_duration_formatted = '\u29D6' + s
             else:
-                self.print_duration_formatted = '⧖' + self.print_duration
+                self.print_duration_formatted = '\u29D6' + self.print_duration
 
 
         if self.filament_used_weight is not None:
+            # todo@ find better char and use \uXXXX
             self.filament_used_weight_formatted = '🡇' + myround(self.filament_used_weight) + 'g'
 
         if self.filament_used_length is not None:
+            # todo@ find better char and use \uXXXX
             self.filament_used_length_formatted = '🠦' + myround(self.filament_used_length, 1000) + 'm'
 
         if self.max_height > 0:
-            self.max_height_formatted = '⤒' + '{:.1f}'.format(round(self.max_height, 1)) + 'mm'
+            self.max_height_formatted = '\u2912' + '{:.1f}'.format(round(self.max_height, 1)) + 'mm'
 
 
     def image_decode(self, text) -> QImage:
@@ -340,28 +346,15 @@ class Neptune_Thumbnail:
         Encode image for new printers
         """
         if img is None:
-            raise Exception('No image')
+            raise Exception('No image to encode')
 
         self.log_debug(f'Encoding image for new printers ({prefix})')
-        system = platform.system()
-        if system == 'Darwin':
-            dll_path = path.join(path.dirname(__file__), 'libColPic.dylib')
-            p_dll = CDLL(dll_path)
-        elif system == 'Linux':
-            dll_path = path.join(path.dirname(__file__), 'libColPic.so')
-            p_dll = CDLL(dll_path)
-        else:
-            dll_path = path.join(path.dirname(__file__), 'ColPic_X64.dll')
-            p_dll = CDLL(dll_path)
 
-        self.log_debug(f'Using {system} dll: {dll_path}')
-
-        result = ''
+        result   = ''
         img_size = img.size()
-        width = img_size.width()
-        height = img_size.height()
-        pixels = width * height
-        color16 = array('H')
+        width    = img_size.width()
+        height   = img_size.height()
+        color16  = array('H')
         try:
             for i in range(height):
                 for j in range(width):
@@ -372,39 +365,40 @@ class Neptune_Thumbnail:
                     rgb = (r << 11) | (g << 5) | b
                     color16.append(rgb)
 
-            # int ColPic_EncodeStr(U16* fromcolor16, int picw, int pich, U8* outputdata, int outputmaxtsize, int colorsmax);
-            fromcolor16 = color16.tobytes()
-            outputdata = array('B', [0] * pixels).tobytes()
-            resultInt = p_dll.ColPic_EncodeStr(
-                fromcolor16,
-                height,
-                width,
-                outputdata,
-                pixels,
-                1024,
-            )
+            buffer_size       = height * width * 10
+            buffer            = bytearray(buffer_size)
+            encoded_size      = int(lib_col_pic.ColPic_EncodeStr(color16, width, height, buffer, buffer_size, 1024))
 
-            data0 = str(outputdata).replace('\\x00', '')
-            data1 = data0[2 : len(data0) - 2]
-            eachMax = 1024 - 8 - 1
-            maxline = int(len(data1) / eachMax)
-            appendlen = eachMax - 3 - int(len(data1) % eachMax)
+            if encoded_size <= 0:
+                raise Exception(f'Nothing encoded')
 
-            for i in range(len(data1)):
-                if i == maxline * eachMax:
-                    result += '\r;' + prefix + data1[i]
-                elif i == 0:
-                    result += prefix + data1[i]
-                elif i % eachMax == 0:
-                    result += '\r' + prefix + data1[i]
-                else:
-                    result += data1[i]
-            result += '\r;'
-            for j in range(appendlen):
-                result += '0'
+            prefix_len        = len(prefix)
+            max_line_len      = 1024
+            max_line_data_len = max_line_len - prefix_len - 1
+
+            data              = buffer[:encoded_size]
+            data_len          = len(data)
+            lines_count       = int(data_len / max_line_data_len)
+            append_len        = max_line_data_len - 3 - int(data_len % max_line_data_len)
+
+            #logger.debug(f'image_encode_new: encoded_size={encoded_size} data_len={data_len} lines_count={lines_count} append_len={append_len}')
+            #logger.debug(f'buffer={str(buffer)}')
+            #logger.debug(f'  data={str(data)}')
+
+            for i in range(data_len):
+                if i % max_line_data_len == 0:
+                    if i > 0:
+                        result += '\r'
+                        if i == lines_count * max_line_data_len:
+                            # last line should be ';;gimage:', instead of ';gimage:'
+                            result += ';'
+                    result += prefix
+                result += chr(data[i])
+
+            result += '\r;' + ('0' * append_len)
 
         except Exception:
-            logger.exception('Failed to prase new thumbnail screenshot')
+            logger.exception('Failed to encode new thumbnail')
 
         return result + '\r'
 
