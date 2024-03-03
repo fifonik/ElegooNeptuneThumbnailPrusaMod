@@ -127,7 +127,9 @@ To add script's command line option in PrusaSlicer/OrcaSlicer, make sure you wra
 `"C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.exe" "--image_size" "300x300";`
 
 
-## Support me if you like
+## Author
+fifonik
+
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/fifonik)
 
 
