@@ -1,0 +1,1 @@
+pyinstaller build.spec
