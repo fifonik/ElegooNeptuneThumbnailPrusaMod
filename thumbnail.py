@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2023 fifonik
+# Copyright (c) 2025 fifonik
 # Copyright (c) 2023 TheJMaster28
 # Copyright (c) 2023 Molodos
 # Copyright (c) 2023 sigathi
@@ -11,7 +11,6 @@
 import argparse
 import base64
 import logging
-import platform
 import re
 import sys
 
@@ -29,17 +28,18 @@ script_dir = path.dirname(sys.argv[0])
 log_file = path.join(script_dir, path.splitext(sys.argv[0])[0] + '.log')
 logging.basicConfig(level=logging.DEBUG, filename=log_file, filemode="w", format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
+app = QGuiApplication(sys.argv)
 
 
-def myround(svalue, divider=1) -> str:
-    f = float(svalue) / divider
+def myround(value: float, divider=1) -> str:
+    f = value / divider
     if abs(f) < 10:
         return str(round(f, 1));
     else:
         return str(round(f));
 
 
-def extract_value(line, key) -> str:
+def extract_value(line: str, key: str) -> str:
     p = line.find(key)
     if p < 0:
         return ''
@@ -49,8 +49,15 @@ def extract_value(line, key) -> str:
         return line[pv:p2].strip()
     else:
         return line[pv:].strip()
-
-app = QGuiApplication(sys.argv)
+    
+def parse_multi_items_value(value: str) -> float:
+    result = 0.0
+    for s in value.split(','):
+        try:
+            result += float(s.strip())
+        except Exception as ex:
+            logger.info('parse_multi_items_value: cannot convert to float=' + s)
+    return result
 
 
 def draw_text(painter: QPainter, rect: QRect, text: str, flags: int, color: QColor = QColor(Qt.GlobalColor.white), bgcolor: QColor = None):
@@ -62,8 +69,7 @@ def draw_text(painter: QPainter, rect: QRect, text: str, flags: int, color: QCol
 
 
 class Neptune_Thumbnail:
-    def __init__(self, input_file, old_printer=False, image_size=None, debug=False, short_duration_format=False, update_original_image=False, original_image_light_theme=False):
-        self.input_file = input_file
+    def __init__(self, input_file, old_printer=False, image_size=None, debug=False, short_duration_format=False, update_original_image=False, original_image_light_theme=False, modify_slicer_header=True, images='200x200,160x160'):
         self.debug = debug
         self.filament_cost = None
         self.filament_used_weight = None
@@ -72,6 +78,7 @@ class Neptune_Thumbnail:
         self.filament_used_length_formatted = None
         self.header = ''
         self.header_line = None
+        self.input_file = input_file
         self.img_base64_block_len = 78
         self.img_encoded = ''
         self.img_encoded_begin = None
@@ -81,16 +88,17 @@ class Neptune_Thumbnail:
         self.img_type_detected = None
         self.img_width = None
         self.img_height = None
+        self.images = images
         self.max_height = 0
         self.max_height_formatted = None
+        self.modify_slicer_header = modify_slicer_header
         self.original_image_light_theme = original_image_light_theme
         self.print_duration = None
         self.print_duration_formatted = None
         self.print_duration_short_format = short_duration_format
-        self.update_original_image = update_original_image
-        self.orca_mask = 'Orca-Slicer'
-        self.prusa_mask = 'Prusa-Slicer'
         self.run_old_printer = old_printer
+        self.slicer_mask_regex = re.compile(r'(Prusa|Orca)(Slicer)')
+        self.update_original_image = update_original_image
 
         logger.info(f'Input file: {args.input_file}')
         if self.img_size is None:
@@ -101,13 +109,17 @@ class Neptune_Thumbnail:
             logger.info('Using short pring duration format')
         if self.run_old_printer:
             logger.info('Using older printer settings')
+        else:
+            logger.info('Previews to be generated (in this order): ' + self.images)
         if self.update_original_image:
             logger.info('Original image will be updated')
+        if self.modify_slicer_header:
+            logger.info('Slicer header will be modified. WARNING: this will break gcode viewers and fluidd files properties')
 
 
-    def log_debug(self, str):
+    def log_debug(self, s: str):
         if self.debug:
-            logger.debug(str)
+            logger.debug(s)
 
 
     def parse(self):
@@ -126,10 +138,10 @@ class Neptune_Thumbnail:
                     self.print_duration = extract_value(line, 'estimated printing time (normal mode) =')
                     self.log_debug(f'Print duration "{self.print_duration}" found at line {index}')
                 elif 'total filament used [g] =' in line:
-                    self.filament_used_weight = extract_value(line, 'total filament used [g] =')
+                    self.filament_used_weight = parse_multi_items_value(extract_value(line, 'total filament used [g] ='))
                     self.log_debug(f'Filament used [g] "{self.filament_used_weight}" found at line {index}')
                 elif 'filament used [mm] =' in line:
-                    self.filament_used_length = extract_value(line, 'filament used [mm] =')
+                    self.filament_used_length = parse_multi_items_value(extract_value(line, 'filament used [mm] ='))
                     self.log_debug(f'Filament used [mm] "{self.filament_used_length}" found at line {index}')
                 elif 'total filament cost =' in line:
                     self.filament_cost = extract_value(line, 'total filament cost =')
@@ -422,6 +434,17 @@ class Neptune_Thumbnail:
         result += f'; thumbnail end\n\n'
         return result
 
+    def slicer_header(self) -> str:
+        result = ''
+        if self.modify_slicer_header:
+            result += re.sub(self.slicer_mask_regex, r'\1-\2', self.header);
+            # Seeing this works for N4 printer thanks to Molodos: https://github.com/Molodos/ElegooNeptuneThumbnails-Prusa
+            result += '\n; Mentioning Cura_SteamEngine X.X to trick printer into thinking this is Cura\n'
+            result += '; Unfortunately, this is breaking Prusa/Orca gcode viewer and fluidd will not show some info\n\n'
+        else:
+            result += self.header
+        return result
+
 
     def run(self):
         """
@@ -442,31 +465,26 @@ class Neptune_Thumbnail:
         if self.update_original_image:
             img_klipper = self.image_encode_klipper(self.image_modify(QImage(img), self.original_image_light_theme), self.img_type_detected, self.img_base64_block_len)
 
-        header = ''
-
-        # Adding image at the very beginning as some reports that comments before image breaks it on some neptune printers
+        images = ''
         if self.run_old_printer:
-            header += self.image_encode(self.image_modify(self.image_resize(img, 100, 100)), ';simage:')
-            header += self.image_encode(img_200x200, ';gimage:')
+            images += self.image_encode(self.image_modify(self.image_resize(img, 100, 100)), ';simage:')
+            images += self.image_encode(img_200x200, ';gimage:')
         else:
-            header += self.image_encode_new(img_200x200, ';gimage:')
-            header += self.image_encode_new(self.image_modify(self.image_resize(img, 160, 160)), ';simage:')
-
-        header += '\n\n; Thumbnail Generated by ElegooNeptuneThumbnailPrusaMod\n'
-        # seeing if this works for N4 printer thanks to Molodos: https://github.com/Molodos/ElegooNeptuneThumbnails-Prusa
-        header += '; Just mentioning Cura_SteamEngine X.X to trick printer into thinking this is Cura\n\n'
-
-        header += self.header.replace('PrusaSlicer', self.prusa_mask).replace('OrcaSlicer', self.orca_mask)
+            images += self.image_encode_new(img_200x200, ';gimage:')
+            images += self.image_encode_new(self.image_modify(self.image_resize(img, 160, 160)), ';simage:')
+        images += '\n\n; Thumbnail Generated by ElegooNeptuneThumbnailPrusaMod\n'
 
         output_file = self.input_file + '.output'
         with open(self.input_file, 'r', encoding='utf8') as input, open(output_file, 'w', encoding='utf8') as output:
             self.log_debug(f'Writing new header with image into file {output_file}')
-            output.write(header)
+            # Adding image at the very beginning as comments before image breaks it on some neptune printers
+            output.write(images)
             self.log_debug(f'Copying content from file {self.input_file} to file {output_file}')
             time_elapsed = None
             total_duration = None
             for index, line in enumerate(input):
                 if index == self.header_line:
+                    output.write(self.slicer_header())
                     continue
                 if self.update_original_image:
                     if index > self.img_encoded_begin and index <= self.img_encoded_end:
@@ -513,6 +531,12 @@ if __name__ == '__main__':
             default=False,
             action='store_true',
         )
+        # todo@ not implemented yet
+        parser.add_argument(
+            '--images',
+            default='200x200,160x160',
+            help='Images that will be generated for new printers in specified order',
+        )
         parser.add_argument(
             '--image_size',
             default=None,
@@ -537,6 +561,12 @@ if __name__ == '__main__':
             help='Original image should be modified for light Klipper theme',
         )
         parser.add_argument(
+            '--modify_slicer_header',
+            default=True,
+            action='store_true',
+            help='Cura header will be added and original slicer will be masked',
+        )
+        parser.add_argument(
             '--debug',
             default=False,
             action='store_true',
@@ -551,7 +581,9 @@ if __name__ == '__main__':
             old_printer=args.old_printer,
             short_duration_format=args.short_duration_format,
             update_original_image=args.update_original_image,
-            original_image_light_theme=args.original_image_light_theme
+            original_image_light_theme=args.original_image_light_theme,
+            modify_slicer_header=args.modify_slicer_header,
+            images=args.images
         )
         obj.run()
     except Exception as ex:
