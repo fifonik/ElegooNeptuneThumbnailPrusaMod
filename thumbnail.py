@@ -69,7 +69,7 @@ def draw_text(painter: QPainter, rect: QRect, text: str, flags: int, color: QCol
 
 
 class Neptune_Thumbnail:
-    def __init__(self, input_file, old_printer=False, image_size=None, debug=False, short_duration_format=False, update_original_image=False, original_image_light_theme=False, modify_slicer_header=True, images='200x200,160x160'):
+    def __init__(self, input_file, old_printer=False, image_size=None, debug=False, short_duration_format=False, update_original_image=False, original_image_light_theme=False, modify_slicer_header=True, images=None):
         self.debug = debug
         self.filament_cost = None
         self.filament_used_weight = None
@@ -106,10 +106,10 @@ class Neptune_Thumbnail:
         else:
             logger.info(f'Will try to find thumbnail with specified size: {self.img_size}')
         if self.print_duration_short_format:
-            logger.info('Using short pring duration format')
+            logger.info('Using short time format for pringing duration')
         if self.run_old_printer:
             logger.info('Using older printer settings')
-        else:
+        if not self.run_old_printer and self.images != None:
             logger.info('Previews to be generated (in this order): ' + self.images)
         if self.update_original_image:
             logger.info('Original image will be updated')
@@ -262,9 +262,9 @@ class Neptune_Thumbnail:
         if self.print_duration_formatted is None and self.max_height_formatted is None and self.filament_used_weight_formatted is None and self.filament_used_length_formatted is None:
             return img;
 
-        self.log_debug('Adding texts to image')
-
         img_size = img.size()
+        self.log_debug(f'Adding texts to image {img_size.width()}x{img_size.height()}')
+
         font_size = int(img_size.height() / 14);
 
         rect_top = QRect(0, 0, img_size.width(), int(img_size.height() / 2) - 1)
@@ -360,7 +360,7 @@ class Neptune_Thumbnail:
         if img is None:
             raise Exception('No image to encode')
 
-        self.log_debug(f'Encoding image for new printers ({prefix})')
+        self.log_debug(f'Encoding image for new printers with prefix: {prefix}')
 
         result   = ''
         img_size = img.size()
@@ -440,7 +440,7 @@ class Neptune_Thumbnail:
             result += re.sub(self.slicer_mask_regex, r'\1-\2', self.header);
             # Seeing this works for N4 printer thanks to Molodos: https://github.com/Molodos/ElegooNeptuneThumbnails-Prusa
             result += '\n; Mentioning Cura_SteamEngine X.X to trick printer into thinking this is Cura\n'
-            result += '; Unfortunately, this is breaking Prusa/Orca gcode viewer and fluidd will not show some info\n\n'
+            result += '; Unfortunately, this "Cura stuff" is breaking Prusa/Orca gcode viewer and fluidd might not show some info\n\n'
         else:
             result += self.header
         return result
@@ -461,17 +461,39 @@ class Neptune_Thumbnail:
         self.log_debug('Modifying g-code file')
 
         img = self.image_decode(self.img_encoded)
-        img_200x200 = self.image_modify(self.image_resize(img, 200, 200))
         if self.update_original_image:
             img_klipper = self.image_encode_klipper(self.image_modify(QImage(img), self.original_image_light_theme), self.img_type_detected, self.img_base64_block_len)
 
         images = ''
         if self.run_old_printer:
             images += self.image_encode(self.image_modify(self.image_resize(img, 100, 100)), ';simage:')
-            images += self.image_encode(img_200x200, ';gimage:')
+            images += self.image_encode(self.image_modify(self.image_resize(img, 200, 200)), ';gimage:')
         else:
-            images += self.image_encode_new(img_200x200, ';gimage:')
-            images += self.image_encode_new(self.image_modify(self.image_resize(img, 160, 160)), ';simage:')
+            formats = [];
+            if self.images != None:
+                img_props_regex = re.compile(r'(?P<width>\d+)x(?P<height>\d+)/(?P<type>\w+)')
+                for format in self.images.split(','):
+                    try:
+                        parsed = img_props_regex.search(format.strip())
+                        if parsed is not None:
+                            formats.append({
+                                'width': int(parsed.group('width')),
+                                'height': int(parsed.group('height')),
+                                'type': parsed.group('type')
+                            });
+                    except Exception as ex:
+                        logger.info(f'Unable to parse image format: {format}')
+            if len(formats) == 0:
+                formats = [
+                    {'width': 200, 'height': 200, 'type': 'gimage'},
+                    {'width': 160, 'height': 160, 'type': 'simage'}
+                ];
+            formats_string = ''
+            for format in formats:
+                formats_string += ' ' + str(format['width']) + 'x' + str(format['height']) + '/' + format['type'];
+            self.log_debug(f'Images to be generated: {formats_string}')
+            for format in formats:
+                images += self.image_encode_new(self.image_modify(self.image_resize(img, format['width'], format['height'])), ';' + format['type'] + ':')
         images += '\n\n; Thumbnail Generated by ElegooNeptuneThumbnailPrusaMod\n'
 
         output_file = self.input_file + '.output'
@@ -534,7 +556,7 @@ if __name__ == '__main__':
         # todo@ not implemented yet
         parser.add_argument(
             '--images',
-            default='200x200,160x160',
+            default=None,
             help='Images that will be generated for new printers in specified order',
         )
         parser.add_argument(
