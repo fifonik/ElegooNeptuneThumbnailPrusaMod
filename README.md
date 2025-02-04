@@ -103,7 +103,7 @@ Use the `--old_printer` argument for these printers:
 - NEPTUNE X
 
 
-Tested with PrusaSlicer 2.6.1/2.7.0, OrcaSlicer 1.8.0/1.8.1/1.9.0/1.9.1 on Neptune 4.
+Tested with PrusaSlicer 2.6.1/2.7.0, OrcaSlicer 1.8.0/1.8.1/1.9.0/1.9.1/2.0.0/2.1.0/2.2.0 on Neptune 4.
 
 
 
@@ -122,6 +122,8 @@ Tested with PrusaSlicer 2.6.1/2.7.0, OrcaSlicer 1.8.0/1.8.1/1.9.0/1.9.1 on Neptu
   Original image (that is used by Klipper) is also modified with text info
 - `--original_image_light_theme`
   Original image will be adjusted for light Klipper's theme (without this option it is adjusted for dark theme that is the default Klipper theme)
+- `--images 200x200/gimage,100x100/simage`
+  Images that will be generated for new printers (in specified order). Default: 200x200/gimage,160x160/simage
 
 To add script's command line option in PrusaSlicer/OrcaSlicer, make sure you wrap them in double quotes:
 `"C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.exe" "--image_size" "300x300";`
