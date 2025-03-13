@@ -545,7 +545,7 @@ if __name__ == '__main__':
             'input_file',
             metavar='gcode-files',
             type=str,
-            help='G-code file to be processed.',
+            help='G-code file to be processed',
         )
         parser.add_argument(
             '--old_printer',
@@ -585,7 +585,7 @@ if __name__ == '__main__':
         parser.add_argument(
             '--modify_slicer_header',
             default=True,
-            action='store_true',
+            action=argparse.BooleanOptionalAction,
             help='Cura header will be added and original slicer will be masked',
         )
         parser.add_argument(
@@ -609,7 +609,7 @@ if __name__ == '__main__':
         )
         obj.run()
     except Exception as ex:
-        logger.exception('Error occurred while running application.')
+        logger.exception('Error occurred while running application')
 
 
 
