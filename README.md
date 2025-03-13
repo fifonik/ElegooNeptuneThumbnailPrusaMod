@@ -124,6 +124,8 @@ Tested with PrusaSlicer 2.6.1/2.7.0, OrcaSlicer 1.8.0/1.8.1/1.9.0/1.9.1/2.0.0/2.
   Original image will be adjusted for light Klipper's theme (without this option it is adjusted for dark theme that is the default Klipper theme)
 - `--images 200x200/gimage,100x100/simage`
   Images that will be generated for new printers (in specified order). Default: 200x200/gimage,160x160/simage
+- `--no-modify_slicer_header`
+  Original slicer header will not be modified. This option should only be used if your firmware displays thumbnail without Cura mentioned in gcode.
 
 To add script's command line option in PrusaSlicer/OrcaSlicer, make sure you wrap them in double quotes:
 `"C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.exe" "--image_size" "300x300";`
