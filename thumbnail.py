@@ -31,12 +31,14 @@ logger = logging.getLogger(__name__)
 app = QGuiApplication(sys.argv)
 
 
+
 def myround(value: float, divider=1) -> str:
     f = value / divider
     if abs(f) < 10:
         return str(round(f, 1));
     else:
         return str(round(f));
+
 
 
 def extract_value(line: str, key: str) -> str:
@@ -49,7 +51,9 @@ def extract_value(line: str, key: str) -> str:
         return line[pv:p2].strip()
     else:
         return line[pv:].strip()
-    
+
+
+
 def parse_multi_items_value(value: str) -> float:
     result = 0.0
     for s in value.split(','):
@@ -60,6 +64,7 @@ def parse_multi_items_value(value: str) -> float:
     return result
 
 
+
 def draw_text(painter: QPainter, rect: QRect, text: str, flags: int, color: QColor = QColor(Qt.GlobalColor.white), bgcolor: QColor = None):
     if bgcolor is not None:
         boundingRect = painter.boundingRect(rect, flags, text)
@@ -68,58 +73,72 @@ def draw_text(painter: QPainter, rect: QRect, text: str, flags: int, color: QCol
     painter.drawText(rect, flags, text)
 
 
+def join(items) -> str:
+    result = ''
+    for item in items:
+        if result != '':
+            result += ','
+        if item is not None:
+            result += item
+        else:
+            result += 'blank'
+    return result
+
+
 class Neptune_Thumbnail:
-    def __init__(self, input_file, old_printer=False, image_size=None, debug=False, short_duration_format=False, update_original_image=False, original_image_light_theme=False, modify_slicer_header=True, images=None):
-        self.debug = debug
+    def __init__(self, args):
+        self.currency = args.currency
+        self.currency_suffix = args.currency_suffix
+        self.debug = args.debug
         self.filament_cost = None
         self.filament_used_weight = None
-        self.filament_used_weight_formatted = None
         self.filament_used_length = None
-        self.filament_used_length_formatted = None
         self.header = ''
         self.header_line = None
-        self.input_file = input_file
+        self.input_file = args.input_file
         self.img_base64_block_len = 78
         self.img_encoded = ''
         self.img_encoded_begin = None
         self.img_encoded_end = None
-        self.img_size = image_size
+        self.img_size = args.image_size
         self.img_type = None
         self.img_type_detected = None
         self.img_width = None
         self.img_height = None
-        self.images = images
+        self.images = args.images
+        self.info = self.parse_info(args.info)
         self.max_height = 0
-        self.max_height_formatted = None
-        self.modify_slicer_header = modify_slicer_header
-        self.original_image_light_theme = original_image_light_theme
+        self.modify_slicer_header = args.modify_slicer_header
+        self.original_image_light_theme = args.original_image_light_theme
         self.print_duration = None
-        self.print_duration_formatted = None
-        self.print_duration_short_format = short_duration_format
-        self.run_old_printer = old_printer
+        self.print_duration_short_format = args.short_duration_format
+        self.run_old_printer = args.old_printer
         self.slicer_mask_regex = re.compile(r'(Prusa|Orca)(Slicer)')
-        self.update_original_image = update_original_image
+        self.update_original_image = args.update_original_image
 
-        logger.info(f'Input file: {args.input_file}')
+        logger.info(f'Input file: {self.input_file}')
         if self.img_size is None:
             logger.info('The first thumbnail from input file larger than 100x100 will be used')
         else:
             logger.info(f'Will try to find thumbnail with specified size: {self.img_size}')
+        logger.info('Adding info icons: ' + join(self.info))
         if self.print_duration_short_format:
             logger.info('Using short time format for pringing duration')
         if self.run_old_printer:
             logger.info('Using older printer settings')
         if not self.run_old_printer and self.images != None:
-            logger.info('Previews to be generated (in this order): ' + self.images)
+            logger.info('Generating previews in this order: ' + self.images)
         if self.update_original_image:
-            logger.info('Original image will be updated')
+            logger.info('Updating original image')
         if self.modify_slicer_header:
-            logger.info('Slicer header will be modified. WARNING: this will break gcode viewers and fluidd files properties')
+            logger.info('Modifying slicer header (WARNING: this will break gcode viewers and fluidd files properties)')
+
 
 
     def log_debug(self, s: str):
         if self.debug:
             logger.debug(s)
+
 
 
     def parse(self):
@@ -144,7 +163,7 @@ class Neptune_Thumbnail:
                     self.filament_used_length = parse_multi_items_value(extract_value(line, 'filament used [mm] ='))
                     self.log_debug(f'Filament used [mm] "{self.filament_used_length}" found at line {index}')
                 elif 'total filament cost =' in line:
-                    self.filament_cost = extract_value(line, 'total filament cost =')
+                    self.filament_cost = float(extract_value(line, 'total filament cost ='))
                     self.log_debug(f'Filament cost "{self.filament_cost}" found at line {index}')
                 elif line.startswith(';Z:'):
                     value = line.split(':')
@@ -185,38 +204,19 @@ class Neptune_Thumbnail:
                     raise Exception(f'Thumbnail end not found in {self.input_file}')
 
 
-    def prepare(self):
-        if self.print_duration is not None:
-            if self.print_duration_short_format:
-                def repl(m):
-                    s = m.group(1)
-                    if s is None:
-                        return ''
-                    match m.group(2):
-                        case 'd':
-                            return s + m.group(2) + 'd '
-                        case 's':
-                            return ''
-                    return ':' + '{:02d}'.format(int(s))
-                s = re.sub(r'\s*(\d+)\s*([dhms])', repl, self.print_duration)
-                s = s.replace(' :', ' ').strip(': ')
-                if ':' not in s:
-                    s = '00:' + s
-                self.print_duration_formatted = '\u29D6' + s
-            else:
-                self.print_duration_formatted = '\u29D6' + self.print_duration
 
+    def parse_info(self, info: str) -> str:
+        result = [None, None, None, None]
+        supported = ['print_duration', 'model_height', 'filament_weight', 'filament_length', 'filament_cost']
+        if info is not None:
+            items = info.lower().split(',')
+            i = 0
+            for item in items:
+                if item.lower() in supported:
+                    result[i] = item
+                i += 1
+        return result
 
-        if self.filament_used_weight is not None:
-            # todo@ find better char and use \uXXXX
-            self.filament_used_weight_formatted = '🡇' + myround(self.filament_used_weight) + 'g'
-
-        if self.filament_used_length is not None:
-            # todo@ find better char and use \uXXXX
-            self.filament_used_length_formatted = '🠦' + myround(self.filament_used_length, 1000) + 'm'
-
-        if self.max_height > 0:
-            self.max_height_formatted = '\u2912' + '{:.1f}'.format(round(self.max_height, 1)) + 'mm'
 
 
     def image_decode(self, text) -> QImage:
@@ -240,6 +240,7 @@ class Neptune_Thumbnail:
         return img
 
 
+
     def image_resize(self, img: QImage, width, height) -> QImage:
         """
         Resize image
@@ -255,11 +256,12 @@ class Neptune_Thumbnail:
         return img.scaled(width, height, Qt.AspectRatioMode.KeepAspectRatio)
 
 
+
     def image_modify(self, img: QImage, light_theme: bool=False) -> QImage:
         """
         Add texts to image
         """
-        if self.print_duration_formatted is None and self.max_height_formatted is None and self.filament_used_weight_formatted is None and self.filament_used_length_formatted is None:
+        if self.filament_cost is None and self.filament_used_length and self.filament_used_weight is None and self.max_height > 0 is None and self.print_duration is None:
             return img;
 
         img_size = img.size()
@@ -287,17 +289,74 @@ class Neptune_Thumbnail:
         painter.setFont(font)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
-        if self.print_duration_formatted is not None:
-            draw_text(painter, rect_top, self.print_duration_formatted, Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop, color, bgcolor)
+        for i in range(4):
+            if self.info[i] is None:
+                continue
 
-        if self.max_height_formatted is not None:
-            draw_text(painter, rect_top, self.max_height_formatted, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop, color, bgcolor)
+            position: int = None
+            rect: QRect = None
+            match i:
+                case 0:
+                    position = Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop
+                    rect = rect_top
+                case 1:
+                    position = Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop
+                    rect = rect_top
+                case 2:
+                    position = Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignBottom
+                    rect = rect_bottom
+                case 3:
+                    position = Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignBottom
+                    rect = rect_bottom
 
-        if self.filament_used_weight_formatted is not None:
-            draw_text(painter, rect_bottom, self.filament_used_weight_formatted, Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignBottom, color, bgcolor)
+            text: str = None
+            match self.info[i]:
+                case 'filament_cost':
+                    if self.filament_cost is not None:
+                        text = '{:.1f}'.format(round(self.filament_cost, 1))
+                        if self.currency_suffix:
+                            text = text + self.currency
+                        else:
+                            text = self.currency + text
 
-        if self.filament_used_length_formatted is not None:
-            draw_text(painter, rect_bottom, self.filament_used_length_formatted, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignBottom, color, bgcolor)
+                case 'filament_length':
+                    if self.filament_used_length is not None:
+                        text = '\U0001F826' + myround(self.filament_used_length, 1000) + 'm'
+
+                case 'filament_weight':
+                    if self.filament_used_weight is not None:
+                        # todo@ find better char
+                        text = '\U0001F847' + myround(self.filament_used_weight) + 'g'
+
+                case 'model_height':
+                    if self.max_height > 0:
+                        text = '\u2912' + '{:.1f}'.format(round(self.max_height, 1)) + 'mm'
+
+                case 'print_duration':
+                    if self.print_duration is not None:
+                        if self.print_duration_short_format:
+                            def repl(m):
+                                s = m.group(1)
+                                if s is None:
+                                    return ''
+                                match m.group(2):
+                                    case 'd':
+                                        return s + m.group(2) + 'd '
+                                    case 's':
+                                        return ''
+                                return ':' + '{:02d}'.format(int(s))
+                            s = re.sub(r'\s*(\d+)\s*([dhms])', repl, self.print_duration)
+                            s = s.replace(' :', ' ').strip(': ')
+                            if ':' not in s:
+                                s = '00:' + s
+                            text = '\u25F7' + s
+                        else:
+                            text = '\u29D6' + self.print_duration
+
+            if text is None:
+                continue
+
+            draw_text(painter, rect, text, position, color, bgcolor)
 
         painter.end()
 
@@ -308,6 +367,7 @@ class Neptune_Thumbnail:
             img.save(path.join(script_dir, 'img-' + str(img_size.width()) + 'x' + str(img_size.height()) + '.' + img_type.lower()))
 
         return img
+
 
 
     def image_encode(self, img: QImage, prefix) -> str:
@@ -351,6 +411,7 @@ class Neptune_Thumbnail:
             if i == height - 1:
                 result += '\r'
         return result
+
 
 
     def image_encode_new(self, img: QImage, prefix) -> str:
@@ -415,6 +476,7 @@ class Neptune_Thumbnail:
         return result + '\r'
 
 
+
     def image_encode_klipper(self, img: QImage, img_type: str, base64_block_len: int) -> str:
         """
         Generate image in original Klipper format (base64 with prefix & suffix)
@@ -434,6 +496,8 @@ class Neptune_Thumbnail:
         result += f'; thumbnail end\n\n'
         return result
 
+
+
     def slicer_header(self) -> str:
         result = ''
         if self.modify_slicer_header:
@@ -446,13 +510,12 @@ class Neptune_Thumbnail:
         return result
 
 
+
     def run(self):
         """
         Main runner for executable
         """
         self.parse()
-
-        self.prepare()
 
         if not self.img_encoded:
             logger.info('Thumbnail not found in g-code')
@@ -553,11 +616,10 @@ if __name__ == '__main__':
             default=False,
             action='store_true',
         )
-        # todo@ not implemented yet
         parser.add_argument(
             '--images',
             default=None,
-            help='Images that will be generated for new printers in specified order',
+            help='Images that will be generated for new printers in specified order. Default: 200x200;simage,160x160;simage',
         )
         parser.add_argument(
             '--image_size',
@@ -594,24 +656,28 @@ if __name__ == '__main__':
             action='store_true',
             help='Output image and write additional info into log file',
         )
+        parser.add_argument(
+            '--info',
+            default='print_duration,model_height,filament_weight,filament_length',
+            help='Comma separated list of info icons that will be added on images',
+        )
+        parser.add_argument(
+            '--currency',
+            default='$',
+            help='Currency',
+        )
+        parser.add_argument(
+            '--currency_suffix',
+            default=False,
+            action='store_true',
+            help='Add currency as suffix',
+        )
 
         args = parser.parse_args()
-        obj = Neptune_Thumbnail(
-            args.input_file,
-            debug=args.debug,
-            image_size=args.image_size,
-            old_printer=args.old_printer,
-            short_duration_format=args.short_duration_format,
-            update_original_image=args.update_original_image,
-            original_image_light_theme=args.original_image_light_theme,
-            modify_slicer_header=args.modify_slicer_header,
-            images=args.images
-        )
+        obj = Neptune_Thumbnail(args)
         obj.run()
     except Exception as ex:
         logger.exception('Error occurred while running application')
-
-
 
 
 
