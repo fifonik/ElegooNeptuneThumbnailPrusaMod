@@ -261,7 +261,7 @@ class Neptune_Thumbnail:
         """
         Add texts to image
         """
-        if self.filament_cost is None and self.filament_used_length and self.filament_used_weight is None and self.max_height > 0 is None and self.print_duration is None:
+        if self.filament_cost is None and self.filament_used_length is None and self.filament_used_weight is None and self.max_height > 0 and self.print_duration is None:
             return img;
 
         img_size = img.size()
