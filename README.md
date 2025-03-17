@@ -126,6 +126,12 @@ Tested with PrusaSlicer 2.6.1/2.7.0, OrcaSlicer 1.8.0/1.8.1/1.9.0/1.9.1/2.0.0/2.
   Images that will be generated for new printers (in specified order). Default: 200x200/gimage,160x160/simage
 - `--no-modify_slicer_header`
   Original slicer header will not be modified. This option should only be used if your firmware displays thumbnail without Cura mentioned in gcode.
+- `--info top-left,top-right,bottom-left,bottom-right`
+  What information should be added on images in each corner. Supported the following: print_duration, model_height, filament_weight, filament_length, filament_cost
+- `--currency $`
+  What currency character is added if you specify filament_cost
+- `--currency_suffix`
+  If specified, the currency character will be added after numeric value
 
 To add script's command line option in PrusaSlicer/OrcaSlicer, make sure you wrap them in double quotes:
 `"C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.exe" "--image_size" "300x300";`
