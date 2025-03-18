@@ -26,11 +26,11 @@ I was not happy with previous implementations so tried to make it better. But en
 Notable changes:
 - Faster: it does not read all file content into memory, which is vital for big g-code files;
 - Easier installation: image size should only be specified in slicer's printer settings and the script accepts PNG and JPG;
-- More information on thumbnail: print duration, used filament weight, used filament length and model height;
+- More information on thumbnail: print duration, used filament weight, used filament length, model height and filament cost can be added to image and you can specify what should be specified in each corner;
 - Better texts quality: texts added after image resizing, font size and texts positions adjusted automatically;
 - Adjust g-code so completed percentage and remaining time are displayed correctly under the thumbnail (you need to tick "Support remaining times" checkbox in Printer Settings);
 - Adjust original image that is displayed in Klipper UI (light and dark themes both supported);
-- Supports PrusaSlicer and OrcaSlicer (the later one needed some additional tweaks to all above works).
+- Supports PrusaSlicer and OrcaSlicer.
 
 
 ## Installation
@@ -109,35 +109,39 @@ Tested with PrusaSlicer 2.6.1/2.7.0, OrcaSlicer 1.8.0/1.8.1/1.9.0/1.9.1/2.0.0/2.
 
 ## Supported command line parameters
 
+- `--info info-abbr-top-left,info-abbr-top-right,info-abbr-bottom-left,info-abbr-bottom-right`
+  What information to add to image in each corner. Supported info-abbr values: `print_duration`, `model_height`, `filament_weight`, `filament_length`, `filament_cost`
+  Default: `print_duration, model_height, filament_weight, filament_length`
 - `--short_duration_format`
-  Use short format for print duration: 1d 23:45 instead of 1d 23h 45m 56s. Who need these seconds, really?
+  Use short format for `print_duration` (`1d 23:45` instead of `1d 23h 45m 56s`. Who need these seconds, really?)
+- `--currency $`
+  Currency character for `filament_cost`
+  Default: `$`
+- `--currency_suffix`
+  Currency character is added as a suffix (example: `10$`). Without the option (default), it is added as a prefix (example: `$10`)
+- `--update_original_image`
+  Original image (that is used by Klipper) is also modified with text info. So you will see the modified image in fluidd.
+- `--original_image_light_theme`
+  Original image will be adjusted for light Klipper's theme. Use this option if you use light fluidd theme (without the option it is adjusted for dark fluidd theme -- default Klipper theme)
 - `--debug`
-  Put additional debug information into log file (`thumbnail.log`) and save resized images in program folder. I will ask you to run with the option and supply log in case you face any issues.
+  Write debug information into `thumbnail.log` and save resized images in program folder. I will ask you to run with the option and supply log in case you face any issues.
 - `--old_printer`
   Generate thumbnails for Neptune 2 series printers & older
 - `--image_size 200x200`
   Without this option the first thumbnail that is bigger than 100x100px from g-code file will be used.
-  If specified, the script will try to find in g-code thumbnail with the specified image size. Script will report error if such thumbnail is not found. So I'd recommend not to use the option at all and only specify size 300x300 in 'Printer Settings'.
-- `--update_original_image`
-  Original image (that is used by Klipper) is also modified with text info
-- `--original_image_light_theme`
-  Original image will be adjusted for light Klipper's theme (without this option it is adjusted for dark theme that is the default Klipper theme)
-- `--images 200x200/gimage,100x100/simage`
-  Images that will be generated for new printers (in specified order). Default: 200x200/gimage,160x160/simage
+  If specified, the script will try to find in g-code thumbnail with the specified size. It will report error if such thumbnail is not found. So I'd recommend not to use the option at all and only specify size 300x300 in 'Printer Settings'.
+- `--images WxH/gimage,WxH/simage`
+  Images to be generated in specified order. The option does not work with option `--old_printer`.
+  Default: `200x200/gimage,160x160/simage`
 - `--no-modify_slicer_header`
-  Original slicer header will not be modified. This option should only be used if your firmware displays thumbnail without Cura mentioned in gcode.
-- `--info top-left,top-right,bottom-left,bottom-right`
-  What information should be added on images in each corner. Supported the following: print_duration, model_height, filament_weight, filament_length, filament_cost
-- `--currency $`
-  What currency character is added if you specify filament_cost
-- `--currency_suffix`
-  If specified, the currency character will be added after numeric value
+  Original slicer header will not be modified. This option should only be used if your printer firmware displays thumbnail without Cura mentioned in gcode.
 
 To add script's command line option in PrusaSlicer/OrcaSlicer, make sure you wrap them in double quotes:
 `"C:\ElegooNeptuneThumbnailPrusaMod\thumbnail.exe" "--image_size" "300x300";`
 
 
 ## Author
+
 fifonik
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/fifonik)
