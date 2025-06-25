@@ -649,8 +649,7 @@ if __name__ == '__main__':
         )
         parser.add_argument(
             '--modify_slicer_header',
-            default=True,
-            action=argparse.BooleanOptionalAction,
+            action='store_true',
             help='Cura header will be added and original slicer will be masked',
         )
         parser.add_argument(
