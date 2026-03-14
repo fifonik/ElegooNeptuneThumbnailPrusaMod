@@ -410,9 +410,9 @@ class Neptune_Thumbnail:
                     datasize += 2
                 if datasize >= 50:
                     datasize = 0
-            result += '\rM10086 ;'
+            result += '\nM10086 ;'
             if i == height - 1:
-                result += '\r'
+                result += '\n'
         return result
 
 
@@ -464,19 +464,19 @@ class Neptune_Thumbnail:
             for i in range(data_len):
                 if i % max_line_data_len == 0:
                     if i > 0:
-                        result += '\r'
+                        result += '\n'
                         if i == lines_count * max_line_data_len:
                             # last line should be ';;gimage:', instead of ';gimage:'
                             result += ';'
                     result += prefix
                 result += chr(data[i])
 
-            result += '\r;' + ('0' * append_len)
+            result += '\n;' + ('0' * append_len)
 
         except Exception:
             logger.exception('Failed to encode new thumbnail')
 
-        return result + '\r'
+        return result + '\n'
 
 
 
