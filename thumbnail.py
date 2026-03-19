@@ -141,6 +141,15 @@ class Neptune_Thumbnail:
 
 
 
+    def save_image(self, img: QImage, prefix: str):
+        img_type = self.img_type
+        if img_type is None:
+            img_type = 'PNG'
+        img_size = img.size()
+        img.save(path.join(script_dir, prefix + str(img_size.width()) + 'x' + str(img_size.height()) + '.' + img_type.lower()))
+
+
+
     def parse(self):
         self.log_debug('Parsing file')
 
@@ -231,6 +240,9 @@ class Neptune_Thumbnail:
         decode_data = base64.b64decode(text_bytes)
         image_stream = BytesIO(decode_data)
         img: QImage = QImage.fromData(image_stream.getvalue())
+
+        if self.debug:
+            self.save_image(img, 'img-original-')
 
         self.img_type_detected = 'PNG'
         if img.format() != QImage.Format.Format_ARGB32:
@@ -364,10 +376,7 @@ class Neptune_Thumbnail:
         painter.end()
 
         if self.debug:
-            img_type = self.img_type
-            if img_type is None:
-                img_type = 'PNG'
-            img.save(path.join(script_dir, 'img-' + str(img_size.width()) + 'x' + str(img_size.height()) + '.' + img_type.lower()))
+            self.save_image(img, 'img-')
 
         return img
 
